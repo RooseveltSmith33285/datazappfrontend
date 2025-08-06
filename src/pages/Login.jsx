@@ -51,7 +51,7 @@ const LoginPage = () => {
     }
     
    try{
-let response=await axios.post(`http://localhost:5000/login`,formData)
+let response=await axios.post(`https://datazapptoolbackend.vercel.app/login`,formData)
 localStorage.setItem('user',JSON.stringify(response.data.user))
 navigate('/consumer')
 setIsSubmitting(true);

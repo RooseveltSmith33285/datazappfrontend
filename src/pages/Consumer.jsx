@@ -156,7 +156,7 @@ const Suppression = () => {
   }
   console.log("DATA")
   console.log(data)
-let response=await axios.post('http://localhost:5000/sendData',data)
+let response=await axios.post('https://datazapptoolbackend.vercel.app/sendData',data)
 alert("Enrichment request sent sucessfully")
 setState({
 campaign_type: '',
@@ -221,7 +221,7 @@ alert("Server error please try again")
       }
       console.log("DATA")
       console.log(data)
-let response=await axios.post('http://localhost:5000/sendData',data)
+let response=await axios.post('https://datazapptoolbackend.vercel.app/sendData',data)
 setState({
   campaign_type: '',
         phone_options: '',

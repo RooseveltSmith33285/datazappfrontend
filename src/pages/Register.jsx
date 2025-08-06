@@ -69,7 +69,7 @@ const RegistrationPage = () => {
     }
     
     try {
-      let response = await axios.post(`http://localhost:5000/register`, formData);
+      let response = await axios.post(`https://datazapptoolbackend.vercel.app/register`, formData);
       setIsSubmitting(true);
       setTimeout(() => {
         setIsSubmitting(false);
