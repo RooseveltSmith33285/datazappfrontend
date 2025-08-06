@@ -57,7 +57,7 @@ navigate('/consumer')
 setIsSubmitting(true);
 setTimeout(() => {
   setIsSubmitting(false);
-  alert('Login successful! Welcome back to DataFlow Pro.');
+  alert('Login successful! Welcome back to Enrichify');
 }, 2000);
    }catch(e){
 if(e?.response.data.error){

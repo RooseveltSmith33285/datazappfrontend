@@ -157,7 +157,7 @@ const Suppression = () => {
   console.log("DATA")
   console.log(data)
 let response=await axios.post('https://datazapptoolbackend.vercel.app/sendData',data)
-alert("Enrichment request sent sucessfully")
+alert("We’re on it one of our team members will be in touch shortly with the next steps.")
 setState({
 campaign_type: '',
       phone_options: '',
@@ -258,7 +258,7 @@ setState({
         save_name: '',
         supression_option:''
 })
-alert("Enrichment request sent sucessfully")
+alert("We’re on it one of our team members will be in touch shortly with the next steps.")
 window.location.reload(true)
     }catch(e){
 alert("Server problem, please try again")
@@ -453,7 +453,7 @@ alert("Server problem, please try again")
     <div className="content-wrapper">
       
     <div className="main-card">
-    <div style={{width:'95vw'}} className="header-container">
+    <div style={{width:'75vw'}} className="header-container">
           <div className="header-icon">
             <MapPin size={24} color="white" />
           </div>
@@ -2435,6 +2435,190 @@ setState((prev)=>{
     })
   };
 
+
+  useEffect(() => {
+    // Restore all form data from context state when component mounts
+    
+    // Restore dwelling type
+    if (state.dwelling_type && state.dwelling_type.length > 0) {
+      setDwellingType({
+        multipleFamily: state.dwelling_type.includes('multipleFamily'),
+        singleFamily: state.dwelling_type.includes('singleFamily')
+      });
+    }
+  
+    // Restore home owner
+    if (state.home_owner && state.home_owner.length > 0) {
+      setHomeOwner({
+        homeOwner: state.home_owner.includes('homeOwner'),
+        renter: state.home_owner.includes('renter')
+      });
+    }
+  
+    // Restore household income
+    if (state.hh_income && state.hh_income.length > 0) {
+      setSelectedIncome(state.hh_income);
+      // Update income options to mark selected ones
+      setIncomeOptions(prev => 
+        prev.map(option => ({
+          ...option,
+          selected: state.hh_income.some(selected => selected.value === option.value)
+        }))
+      );
+    }
+  
+    // Restore gender
+    if (state.individuals && state.individuals.length > 0) {
+      setGender({
+        male: state.individuals.includes(true), // Adjust based on your actual logic
+        female: state.individuals.includes(false) // Adjust based on your actual logic
+      });
+    }
+  
+    // Restore marital status
+    if (state.martial_status && state.martial_status.length > 0) {
+      setMaritalStatus({
+        married: state.martial_status.includes(true), // Adjust based on your actual logic
+        single: state.martial_status.includes(false) // Adjust based on your actual logic
+      });
+    }
+  
+    // Restore age groups
+    if (state.age_group && state.age_group.length > 0) {
+      setSelectedAgeGroups(state.age_group);
+      // Remove selected age groups from available
+      setAvailableAgeGroups(prev => 
+        prev.filter(age => !state.age_group.some(selected => selected.value === age.value))
+      );
+    }
+  
+    // Restore credit ratings
+    if (state.credit_rating && state.credit_rating.length > 0) {
+      setSelectedCreditRatings(state.credit_rating);
+      // Remove selected credit ratings from available
+      setAvailableCreditRatings(prev => 
+        prev.filter(credit => !state.credit_rating.some(selected => selected.value === credit.value))
+      );
+    }
+  
+    // Restore occupation
+    if (state.occupation) {
+      if (typeof state.occupation === 'string') {
+        // If it's a single string, it could be either input or list
+        if (state.occupation.includes(',')) {
+          setOccupationList(state.occupation);
+        } else {
+          setOccupationInput(state.occupation);
+        }
+      }
+    }
+  
+    // Restore ethnic codes
+    if (state.ethnic_code && state.ethnic_code.length > 0) {
+      setSelectedEthnicCodes(state.ethnic_code);
+      // Remove selected ethnic codes from available
+      setAvailableEthnicCodes(prev => 
+        prev.filter(ethnic => !state.ethnic_code.some(selected => selected.value === ethnic.value))
+      );
+    }
+  
+    // Restore donor affinity/propensity to give
+    if (state.propensity_to_give !== undefined) {
+      if (Array.isArray(state.propensity_to_give)) {
+        setDonorAffinity(prev => ({
+          ...prev,
+          likely: state.propensity_to_give.includes('likely'),
+          veryLikely: state.propensity_to_give.includes('veryLikely'),
+          notLikely: state.propensity_to_give.includes('notLikely')
+        }));
+      }
+    }
+  
+    // Restore charity options
+    if (state.propensity_range && state.propensity_range.length > 0) {
+      if (Array.isArray(state.propensity_range) && typeof state.propensity_range[0] === 'string') {
+        // If it's an array of strings (charity keys)
+        setSelectedCharityOptions(state.propensity_range);
+        setAvailableCharityOptions(prev => 
+          prev.filter(charity => !state.propensity_range.includes(charity))
+        );
+      } else if (Array.isArray(state.propensity_range) && state.propensity_range[0]?.value) {
+        // If it's an array of objects (propensity options)
+        setSelectedPropensityOptions(state.propensity_range);
+        setCurrentAvailableOptions(prev => 
+          prev.filter(prop => !state.propensity_range.some(selected => selected.value === prop.value))
+        );
+      }
+    }
+  
+    // Restore turning 65
+    if (state.turning_65 && state.turning_65.length > 0) {
+      setSelectedOptions(state.turning_65);
+      setAvailableOptions(prev => 
+        prev.filter(option => !state.turning_65.some(selected => selected.value === option.value))
+      );
+    }
+  
+    // Restore pet options
+    if (state.pet_range && state.pet_range.length > 0) {
+      setSelectedPetCategoryOptions(state.pet_range);
+      setAvailablePetCategoryOptions(prev => 
+        prev.filter(pet => !state.pet_range.some(selected => selected.value === pet.value))
+      );
+    }
+  
+    // Restore outdoor options
+    if (state.outdoor_range && state.outdoor_range.length > 0) {
+      setSelectedOutdoorOptions(state.outdoor_range);
+      setAvailableOutdoorOptions(prev => 
+        prev.filter(outdoor => !state.outdoor_range.some(selected => selected.value === outdoor.value))
+      );
+    }
+  
+    // Restore sports & fitness options
+    if (state.sports_and_fitness_range && state.sports_and_fitness_range.length > 0) {
+      setSelectedSportsFitnessOptions(state.sports_and_fitness_range);
+      setAvailableSportsFitnessOptions(prev => 
+        prev.filter(sports => !state.sports_and_fitness_range.some(selected => selected.value === sports.value))
+      );
+    }
+  
+    // Restore travel & hobbies options
+    if (state.travel_and_hobbies_range && state.travel_and_hobbies_range.length > 0) {
+      setSelectedTravelHobbiesOptions(state.travel_and_hobbies_range);
+      setAvailableTravelHobbiesOptions(prev => 
+        prev.filter(travel => !state.travel_and_hobbies_range.some(selected => selected.value === travel.value))
+      );
+    }
+  
+    // Restore genre books options
+    if (state.genre_range && state.genre_range.length > 0) {
+      setSelectedGenreBooksOptions(state.genre_range);
+      setAvailableGenreBooksOptions(prev => 
+        prev.filter(genre => !state.genre_range.some(selected => selected.value === genre.value))
+      );
+    }
+  
+  }, [
+    state.dwelling_type,
+    state.home_owner,
+    state.hh_income,
+    state.individuals,
+    state.martial_status,
+    state.age_group,
+    state.credit_rating,
+    state.occupation,
+    state.ethnic_code,
+    state.propensity_to_give,
+    state.propensity_range,
+    state.turning_65,
+    state.pet_range,
+    state.outdoor_range,
+    state.sports_and_fitness_range,
+    state.travel_and_hobbies_range,
+    state.genre_range
+  ]);
+
   const handleDonorSelectBoxAffinityChange = (field) => {
     setDonorAffinity(prev => ({
       ...prev,
@@ -2948,7 +3132,7 @@ Geography
 <div className="card-grid">
 
       <div className="row">
-         <div style={{width:'95vw'}} className="header-container">
+         <div style={{width:'75vw'}} className="header-container">
           <div className="header-icon">
             <MapPin size={24} color="white" />
           </div>
@@ -3621,40 +3805,7 @@ Geography
     <ul className="panel-collapse collapse" style={{ marginTop: '10px', marginLeft: '12px', overflow: 'hidden', display: 'block' }}>
       <li>
       <td style={{ verticalAlign: 'top' }}>
-  <table>
-    <tbody>
-      <tr>
-      <td>
-  <input 
-    type="radio" 
-    id="PropensityAnd" 
-    name="PropensityAndOr" 
-    value="AND" 
-    checked={state.propensity_op === "AND"}
-    onChange={() => setState(prev => ({
-      ...prev,
-      propensity_op: "AND"
-    }))}
-  />
-  <label htmlFor="PropensityAnd">AND</label>
-</td>
-<td>
-  <input 
-    type="radio" 
-    id="PropensityOr" 
-    name="PropensityAndOr" 
-    value="OR" 
-    checked={state.propensity_op === "OR"}
-    onChange={() => setState(prev => ({
-      ...prev,
-      propensity_op: "OR"
-    }))}
-  />
-  <label htmlFor="PropensityOr">OR</label>
-</td>
-      </tr>
-    </tbody>
-  </table>
+
 </td>
         <div className="panel-body" style={{ paddingTop: '0px !important' }}>
           <div>
@@ -3881,30 +4032,7 @@ Geography
         <td style={{ verticalAlign: 'top' }}>
   <table>
     <tbody>
-      <tr>
-      <td>
-              <input 
-                type="radio" 
-                id="PetAnd" 
-                name="PetAndOr" 
-                value="AND" 
-                checked={state.pet_op === "AND"}
-                onChange={() => setState(prev => ({ ...prev, pet_op: "AND" }))}
-              />
-              <label htmlFor="PetAnd">AND</label>
-            </td>
-            <td>
-              <input 
-                type="radio" 
-                id="PetOr" 
-                name="PetAndOr" 
-                value="OR" 
-                checked={state.pet_op === "OR"}
-                onChange={() => setState(prev => ({ ...prev, pet_op: "OR" }))}
-              />
-              <label htmlFor="PetOr">OR</label>
-            </td>
-      </tr>
+      
     </tbody>
   </table>
 </td>
@@ -3994,36 +4122,7 @@ Geography
         <td style={{ verticalAlign: 'top' }}>
   <table>
     <tbody>
-      <tr>
-      <td>
-      <input 
-  type="radio"
-  id="PropensityAnd"
-  name="PropensityAndOr"  // Same name for both
-  value="AND"
-  checked={state.propensity_op === "AND"}
-  onChange={() => setState(prev => ({
-    ...prev,
-    propensity_op: "AND"
-  }))}
-/>
-<label htmlFor="PropensityAnd">AND</label>
-
-<input 
-  type="radio"
-  id="PropensityOr"
-  name="PropensityAndOr" 
-  value="OR"
-  checked={state.propensity_op === "OR"}
-  onChange={() => setState(prev => ({
-    ...prev,
-    propensity_op: "OR"
-  }))}
-/>
-<label htmlFor="PropensityOr">OR</label>
-              
-            </td>
-      </tr>
+      
     </tbody>
   </table>
 </td>
@@ -4123,36 +4222,7 @@ Geography
         <td style={{ verticalAlign: 'top' }}>
   <table>
     <tbody>
-      <tr>
-      <td>
-  <input 
-    type="radio"
-    id="OutdoorAnd"
-    name="OutdoorAndOr" 
-    value="AND"
-    checked={state.outdoor_op === "AND"}
-    onChange={() => setState(prev => ({
-      ...prev,
-      outdoor_op: "AND"
-    }))}
-  />
-  <label htmlFor="OutdoorAnd">AND</label>
-</td>
-<td>
-  <input 
-    type="radio"
-    id="OutdoorOr"
-    name="OutdoorAndOr"
-    value="OR"
-    checked={state.outdoor_op === "OR"}
-    onChange={() => setState(prev => ({
-      ...prev,
-      outdoor_op: "OR"
-    }))}
-  />
-  <label htmlFor="OutdoorOr">OR</label>
-</td>
-      </tr>
+      
     </tbody>
   </table>
 </td>
@@ -4243,36 +4313,7 @@ Geography
         <td style={{ verticalAlign: 'top' }}>
   <table>
     <tbody>
-      <tr>
-      <td>
-  <input 
-    type="radio"
-    id="SportsFitnessAnd"
-    name="SportsFitnessAndOr"
-    value="AND"
-    checked={state.sports_and_fitness_op === "AND"}
-    onChange={() => setState(prev => ({
-      ...prev,
-      sports_and_fitness_op: "AND"
-    }))}
-  />
-  <label htmlFor="SportsFitnessAnd">AND</label>
-</td>
-<td>
-  <input 
-    type="radio"
-    id="SportsFitnessOr"
-    name="SportsFitnessAndOr"
-    value="OR"
-    checked={state.sports_and_fitness_op === "OR"}
-    onChange={() => setState(prev => ({
-      ...prev,
-      sports_and_fitness_op: "OR"
-    }))}
-  />
-  <label htmlFor="SportsFitnessOr">OR</label>
-</td>
-      </tr>
+     
     </tbody>
   </table>
 </td>
@@ -4363,38 +4404,7 @@ Geography
         <td style={{ verticalAlign: 'top' }}>
   <table>
     <tbody>
-      <tr>
-      <td>
-  <input 
-    type="radio"
-    id="TravelHobbiesAnd"
-    name="TravelHobbiesAndOr"
-    value="AND"
-    checked={state.travel_and_hobbies_op === "AND"}
-    onChange={() => setState(prev => ({
-      ...prev,
-      travel_and_hobbies_op: "AND",
-      travel_and_hobbies_range: prev.travel_and_hobbies_range
-    }))}
-  />
-  <label htmlFor="TravelHobbiesAnd">AND</label>
-</td>
-<td>
-  <input 
-    type="radio"
-    id="TravelHobbiesOr"
-    name="TravelHobbiesAndOr"
-    value="OR"
-    checked={state.travel_and_hobbies_op === "OR"}
-    onChange={() => setState(prev => ({
-      ...prev,
-      travel_and_hobbies_op: "OR",
-      travel_and_hobbies_range: prev.travel_and_hobbies_range
-    }))}
-  />
-  <label htmlFor="TravelHobbiesOr">OR</label>
-</td>
-      </tr>
+     
     </tbody>
   </table>
 </td>
@@ -4488,38 +4498,7 @@ Geography
         <td style={{ verticalAlign: 'top' }}>
   <table>
     <tbody>
-      <tr>
-      <td>
-              <input 
-                type="radio"
-                id="GenreAnd"
-                name="GenreAndOr"
-                value="AND"
-                checked={state.genre_op === "AND"}
-                onChange={() => setState(prev => ({
-                  ...prev,
-                  genre_op: "AND",
-                  genre_range: prev.genre_range
-                }))}
-              />
-              <label htmlFor="GenreAnd">AND</label>
-            </td>
-            <td>
-              <input 
-                type="radio"
-                id="GenreOr"
-                name="GenreAndOr"
-                value="OR"
-                checked={state.genre_op === "OR"}
-                onChange={() => setState(prev => ({
-                  ...prev,
-                  genre_op: "OR",
-                  genre_range: prev.genre_range
-                }))}
-              />
-              <label htmlFor="GenreOr">OR</label>
-            </td>
-      </tr>
+      
     </tbody>
   </table>
 </td>
@@ -5050,6 +5029,54 @@ const Geography = () => {
   }, []);
 
 
+  useEffect(() => {
+    // Restore form data from context state when component mounts
+    if (state.zip_codes || state.states || state.cities) {
+      setFormData(prev => ({
+        ...prev,
+        zipCodes: state.zip_codes ? state.zip_codes.join(', ') : '',
+        states: prev.states.map(stateItem => ({
+          ...stateItem,
+          checked: state.states ? state.states.includes(stateItem.code) : false
+        }))
+      }));
+  
+      // Restore selected cities
+      if (state.cities && state.cities.length > 0) {
+        setSelectedItems(prev => ({
+          ...prev,
+          cities: state.cities || []
+        }));
+      }
+  
+      // Update available items based on selected states
+      if (state.states && state.states.length > 0) {
+        const cities = [];
+        const metros = [];
+        const counties = [];
+  
+        state.states.forEach(stateCode => {
+          if (stateData[stateCode]) {
+            cities.push(...stateData[stateCode].cities);
+            metros.push(...stateData[stateCode].metros);
+            counties.push(...stateData[stateCode].counties);
+          }
+        });
+  
+        // Remove already selected cities from available items
+        const availableCities = cities.filter(city => 
+          !state.cities || !state.cities.includes(city)
+        );
+  
+        setAvailableItems({ 
+          cities: availableCities, 
+          metros, 
+          counties 
+        });
+      }
+    }
+  }, []);
+  
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -5666,6 +5693,9 @@ console.log(state)
       }
     }));
 
+
+    
+
     setState((prev)=>{
       return {
         ...prev,
@@ -5673,6 +5703,23 @@ console.log(state)
       }
     })
   };
+
+  useEffect(() => {
+    // Restore form data from context state when component mounts
+    setFormData(prev => ({
+      ...prev,
+      campaignType: state.campaign_type || '',
+      dedupOption: state.dedup_option || '',
+      phoneOptions: state.phone_options || {
+        landline: false,
+        landlineDNC: false,
+        cell: false,
+        cellDNC: false,
+        mixed: false,
+        mixedDNC: false
+      }
+    }));
+  }, [state.campaign_type, state.dedup_option, state.phone_options]);
 
   const handleContinue = () => {
  
@@ -5765,7 +5812,7 @@ console.log(state)
             <div style={{ gridColumn: 'span 2 / span 2' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                 <div style={{ textAlign: 'center' }}>
-                <div style={{width:'95vw'}} className="header-container">
+                <div style={{width:'75vw'}} className="header-container">
           <div className="header-icon">
             <Database size={24} color="white" />
           </div>
@@ -5971,6 +6018,19 @@ console.log(state)
                         <div className="radio-option">
                           <input
                             type="radio"
+                            id="onePerHH"
+                            name="dedupOption"
+                            value="This feature removes duplicate records from your data set to ensure each contact appears only once, improving accuracy and reducing redundancy."
+                            checked={formData.dedupOption === 'This feature removes duplicate records from your data set to ensure each contact appears only once, improving accuracy and reducing redundancy.'}
+                            onChange={(e) => handleDedupChange(e.target.value)}
+                            className="radio-input"
+                          />
+                          <label htmlFor="onePerHH" className="radio-label">This feature removes duplicate records from your data set to ensure each contact appears only once, improving accuracy and reducing redundancy.</label>
+                        </div>
+
+                        <div className="radio-option">
+                          <input
+                            type="radio"
                             id="allPerHH"
                             name="dedupOption"
                             value="All Per Household"
@@ -5998,23 +6058,7 @@ console.log(state)
               
               <div className="info-card-dark">
                 <div className="info-card-overlay" />
-                <div className="info-card-content">
-                  <div 
-                    className="video-thumbnail"
-                    onClick={() => setShowVideoModal(true)}
-                  >
-                    <img 
-                      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23374151'/%3E%3Ctext x='150' y='100' text-anchor='middle' dy='0.3em' fill='%23ffffff' font-family='sans-serif' font-size='16'%3EDataZapp Video%3C/text%3E%3C/svg%3E" 
-                      alt="DataZapp Video" 
-                      style={{ width: '100%', height: '128px', objectFit: 'cover' }}
-                    />
-                    <div className="video-thumbnail-overlay">
-                      <div className="video-play-button">
-                        <Play style={{ width: '24px', height: '24px', color: '#1e293b', marginLeft: '4px' }} />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                
               </div>
 
               <div className="info-card-light">

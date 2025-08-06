@@ -854,6 +854,22 @@ input[type="checkbox"]:disabled,
 ul li::marker {
   content: none !important;
 }
+
+li.portlet {
+  list-style: none;
+}
+
+/* Or more specifically target the marker */
+li.portlet::marker {
+  display: none;
+}
+
+/* You might also want to remove default margin/padding */
+li.portlet {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
 /* ========================================
    RESPONSIVE DESIGN
    ======================================== */

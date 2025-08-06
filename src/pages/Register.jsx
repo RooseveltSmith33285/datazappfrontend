@@ -73,7 +73,7 @@ const RegistrationPage = () => {
       setIsSubmitting(true);
       setTimeout(() => {
         setIsSubmitting(false);
-        alert('Registration successful! Welcome to DataFlow Pro.');
+        alert('Registration successful! Welcome to Enrichify.');
         setFormData({
           name: '',
           email: '',
