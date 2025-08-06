@@ -6,6 +6,24 @@
   height: 40vmin;
   pointer-events: none;
 }
+.formGroup input:-webkit-autofill,
+.formGroup input:-webkit-autofill:hover, 
+.formGroup input:-webkit-autofill:focus, 
+.formGroup input:-webkit-autofill:active {
+  -webkit-text-fill-color: white !important;
+  -webkit-box-shadow: 0 0 0px 1000px rgba(30, 41, 59, 0.8) inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+  caret-color: white;
+}
+
+/* For Firefox */
+.formGroup input:-moz-autofill,
+.formGroup input:-moz-autofill:hover, 
+.formGroup input:-moz-autofill:focus {
+  filter: none;
+  -webkit-text-fill-color: white !important;
+  background-color: rgba(30, 41, 59, 0.8) !important;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
