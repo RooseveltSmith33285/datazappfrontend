@@ -109,10 +109,7 @@ const RegistrationPage = () => {
           
           <div className={styles.brandContent}>
             <img src="https://www.enrichifydata.com/wp-content/uploads/2024/11/WhatsApp_Image_2024-11-24_at_8.44.26_PM-removebg-preview.png"/>
-            <div className={styles.logo}>
-              <Database className={styles.logoIcon} />
-              <h1>DataFlow Pro</h1>
-            </div>
+          
             
             <h2 className={styles.heading}>
               Unlock the Power of
