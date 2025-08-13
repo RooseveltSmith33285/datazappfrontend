@@ -4,10 +4,9 @@ import styles from './LoginPage.module.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const Forgetpassword = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: ''
+    email: ''
   });
   
   const navigate=useNavigate();
@@ -35,30 +34,17 @@ const LoginPage = () => {
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email';
     }
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    }
     
     return newErrors;
   };
 
   const handleSubmit = async () => {
-    const newErrors = validateForm();
     
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
     
    try{
-let response=await axios.post(`https://datazapptoolbackend.vercel.app/login`,formData)
-localStorage.setItem('user',JSON.stringify(response.data.user))
-navigate('/consumer')
-setIsSubmitting(true);
-setTimeout(() => {
-  setIsSubmitting(false);
-  alert('Login successful! Welcome back to Enrichify');
-}, 2000);
+let response=await axios.post(`https://datazapptoolbackend.vercel.app/forgetpassword`,formData)
+alert("Reset password link sent")
+
    }catch(e){
 if(e?.response.data.error){
   alert(e?.response?.data?.error)
@@ -117,8 +103,8 @@ if(e?.response.data.error){
             </div>
             
             <div className={styles.formHeader}>
-              <h2>Sign In</h2>
-              <p>Access your data dashboard</p>
+              <h2>Forget password</h2>
+              <p>Get reset password link to reset password</p>
             </div>
 
             <div className={styles.fields}>
@@ -137,15 +123,9 @@ if(e?.response.data.error){
 
               {/* Password */}
               <div className={styles.formGroup}>
-                <label>Password</label>
+               
                 <div className={styles.passwordInput}>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    placeholder="••••••••"
-                  />
+                 
                 <button
   type="button"
   onClick={() => setShowPassword(!showPassword)}
@@ -173,27 +153,14 @@ if(e?.response.data.error){
   {isSubmitting ? (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
       <div className={styles.spinner}></div>
-      Signing In...
+      Sending link...
     </div>
   ) : (
-    'Sign In'
+    'Send reset link'
   )}
 </button>
 
-              {/* Sign Up Link */}
-              <div className={styles.signup}>
-                <a href='/' style={{color:'white'}}>
-                  Don't have an account?{' '}
-                  <span style={{color:'white'}}>Create account</span>
-                </a>
-              </div>
-
-              <div className={styles.signup}>
-                <a href='/forgetpassword' style={{color:'white'}}>
-                  Forgot your password?{' '}
-                  <span style={{color:'white'}}>Reset password</span>
-                </a>
-              </div>
+           
             </div>
           </div>
         </div>
@@ -202,4 +169,4 @@ if(e?.response.data.error){
   );
 };
 
-export default LoginPage;
+export default Forgetpassword;

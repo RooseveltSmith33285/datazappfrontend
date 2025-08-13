@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Database, Shield, Zap, Globe, X } from 'lucide-react';
+import { Eye, EyeOff, Database, Shield, Zap, Globe, X, Lock } from 'lucide-react';
 import styles from './RegistrationPage.module.css';
 import axios from 'axios';
 
@@ -32,6 +32,28 @@ const RegistrationPage = () => {
     }
   };
 
+  const getPasswordStrength = (password) => {
+    let strength = 0;
+    if (password.length >= 8) strength++;
+    if (/[a-z]/.test(password)) strength++;
+    if (/[A-Z]/.test(password)) strength++;
+    if (/\d/.test(password)) strength++;
+    if (/[^A-Za-z0-9]/.test(password)) strength++;
+    return strength;
+  };
+
+  const getStrengthText = (strength) => {
+    switch (strength) {
+      case 0:
+      case 1: return { text: 'Very Weak', color: '#ef4444' };
+      case 2: return { text: 'Weak', color: '#f97316' };
+      case 3: return { text: 'Fair', color: '#eab308' };
+      case 4: return { text: 'Good', color: '#22c55e' };
+      case 5: return { text: 'Strong', color: '#10b981' };
+      default: return { text: 'Very Weak', color: '#ef4444' };
+    }
+  };
+
   const validateForm = () => {
     const newErrors = {};
     
@@ -45,8 +67,12 @@ const RegistrationPage = () => {
       newErrors.password = 'Password is required';
     } else if (formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters';
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
     }
-    if (formData.password !== formData.confirmPassword) {
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Passwords do not match';
     }
     if (!formData.address.trim()) newErrors.address = 'Address is required';
@@ -68,9 +94,10 @@ const RegistrationPage = () => {
       return;
     }
     
+    setIsSubmitting(true);
+    
     try {
       let response = await axios.post(`https://datazapptoolbackend.vercel.app/register`, formData);
-      setIsSubmitting(true);
       setTimeout(() => {
         setIsSubmitting(false);
         alert('Registration successful! Welcome to Enrichify.');
@@ -85,6 +112,7 @@ const RegistrationPage = () => {
         });
       }, 2000);
     } catch(e) {
+      setIsSubmitting(false);
       if(e?.response?.data?.error) {
         alert(e?.response?.data?.error);
       } else {
@@ -97,6 +125,9 @@ const RegistrationPage = () => {
     setShowTermsModal(!showTermsModal);
   };
 
+  const passwordStrength = getPasswordStrength(formData.password);
+  const strengthInfo = getStrengthText(passwordStrength);
+
   return (
     <div className={styles.container}>
       <div className={styles.pattern}></div>
@@ -108,8 +139,7 @@ const RegistrationPage = () => {
           <div className={styles.circleBottom}></div>
           
           <div className={styles.brandContent}>
-            <img src="https://www.enrichifydata.com/wp-content/uploads/2024/11/WhatsApp_Image_2024-11-24_at_8.44.26_PM-removebg-preview.png"/>
-          
+            <img src="https://www.enrichifydata.com/wp-content/uploads/2024/11/WhatsApp_Image_2024-11-24_at_8.44.26_PM-removebg-preview.png" alt="Enrichify Logo" />
             
             <h2 className={styles.heading}>
               Unlock the Power of
@@ -117,7 +147,7 @@ const RegistrationPage = () => {
             </h2>
             
             <p className={styles.description}>
-              Join thousands of professionals who trust DataFlow Pro for enterprise-grade data solutions and real-time insights.
+              Join thousands of professionals who trust ENRICHIFY for enterprise-grade data solutions and real-time insights.
             </p>
             
             <div className={styles.features}>
@@ -142,7 +172,7 @@ const RegistrationPage = () => {
           <div className={styles.formContainer}>
             <div className={styles.mobileLogo}>
               <Database className={styles.mobileIcon} />
-              <h1>DataFlow Pro</h1>
+              <h1>ENRICHIFY</h1>
             </div>
             
             <div className={styles.formHeader}>
@@ -207,12 +237,14 @@ const RegistrationPage = () => {
               <div className={styles.formGroup}>
                 <label>Password</label>
                 <div className={styles.passwordInput}>
+                  <Lock className={styles.inputIcon} size={20} />
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    placeholder="••••••••"
+                    placeholder="Create a strong password"
+                    style={{ paddingLeft: '44px' }}
                   />
                   <button
                     type="button"
@@ -222,19 +254,64 @@ const RegistrationPage = () => {
                     {showPassword ? <EyeOff className={styles.eyeIcon} /> : <Eye className={styles.eyeIcon} />}
                   </button>
                 </div>
+                
+                {/* Password Strength Indicator */}
+                {formData.password && (
+                  <div className={styles.passwordStrength}>
+                    <div className={styles.strengthBar}>
+                      <div 
+                        className={styles.strengthFill}
+                        style={{ 
+                          width: `${(passwordStrength / 5) * 100}%`,
+                          backgroundColor: strengthInfo.color
+                        }}
+                      ></div>
+                    </div>
+                    <span style={{ color: strengthInfo.color, fontSize: '12px' }}>
+                      Password Strength: {strengthInfo.text}
+                    </span>
+                  </div>
+                )}
+                
                 {errors.password && <p className={styles.error}>{errors.password}</p>}
               </div>
+
+              {/* Password Requirements */}
+              {formData.password && (
+                <div className={styles.passwordRequirements}>
+                  <h4>Password Requirements:</h4>
+                  <ul>
+                    <li style={{ color: formData.password.length >= 8 ? '#10b981' : '#64748b' }}>
+                      {formData.password.length >= 8 ? '✓' : '○'} At least 8 characters
+                    </li>
+                    <li style={{ color: /[a-z]/.test(formData.password) ? '#10b981' : '#64748b' }}>
+                      {/[a-z]/.test(formData.password) ? '✓' : '○'} One lowercase letter
+                    </li>
+                    <li style={{ color: /[A-Z]/.test(formData.password) ? '#10b981' : '#64748b' }}>
+                      {/[A-Z]/.test(formData.password) ? '✓' : '○'} One uppercase letter
+                    </li>
+                    <li style={{ color: /\d/.test(formData.password) ? '#10b981' : '#64748b' }}>
+                      {/\d/.test(formData.password) ? '✓' : '○'} One number
+                    </li>
+                    <li style={{ color: /[^A-Za-z0-9]/.test(formData.password) ? '#10b981' : '#64748b' }}>
+                      {/[^A-Za-z0-9]/.test(formData.password) ? '✓' : '○'} One special character (recommended)
+                    </li>
+                  </ul>
+                </div>
+              )}
 
               {/* Confirm Password */}
               <div className={styles.formGroup}>
                 <label>Confirm Password</label>
                 <div className={styles.passwordInput}>
+                  <Lock className={styles.inputIcon} size={20} />
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    placeholder="••••••••"
+                    placeholder="Confirm your password"
+                    style={{ paddingLeft: '44px' }}
                   />
                   <button
                     type="button"
@@ -244,6 +321,22 @@ const RegistrationPage = () => {
                     {showConfirmPassword ? <EyeOff className={styles.eyeIcon} /> : <Eye className={styles.eyeIcon} />}
                   </button>
                 </div>
+                
+                {/* Password Match Indicator */}
+                {formData.confirmPassword && (
+                  <div className={styles.matchIndicator}>
+                    {formData.password === formData.confirmPassword ? (
+                      <span style={{ color: '#10b981', fontSize: '12px' }}>
+                        ✓ Passwords match
+                      </span>
+                    ) : (
+                      <span style={{ color: '#ef4444', fontSize: '12px' }}>
+                        ✗ Passwords don't match
+                      </span>
+                    )}
+                  </div>
+                )}
+                
                 {errors.confirmPassword && <p className={styles.error}>{errors.confirmPassword}</p>}
               </div>
 
@@ -259,7 +352,7 @@ const RegistrationPage = () => {
                   I agree to the{' '}
                   <span className={styles.termsLink} onClick={toggleTermsModal}>Terms of Service</span>{' '}
                   and{' '}
-                  <span >Privacy Policy</span>
+                  <span>Privacy Policy</span>
                 </label>
               </div>
               {errors.agreeToTerms && <p className={styles.error}>{errors.agreeToTerms}</p>}
