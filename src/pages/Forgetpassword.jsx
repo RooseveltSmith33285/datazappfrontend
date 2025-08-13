@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Database, Shield, Zap, Globe } from 'lucide-react';
+import { Eye, EyeOff, Database, Shield, Zap, Globe, RefreshCw } from 'lucide-react';
 import styles from './LoginPage.module.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -9,10 +9,12 @@ const Forgetpassword = () => {
     email: ''
   });
   
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState('idle'); // 'idle', 'success', 'error'
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,6 +25,12 @@ const Forgetpassword = () => {
     
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+    
+    // Clear previous status when user starts typing
+    if (submitStatus !== 'idle') {
+      setSubmitStatus('idle');
+      setErrorMessage('');
     }
   };
 
@@ -39,19 +47,72 @@ const Forgetpassword = () => {
   };
 
   const handleSubmit = async () => {
-    
-    
-   try{
-let response=await axios.post(`https://datazapptoolbackend.vercel.app/forgetpassword`,formData)
-alert("Reset password link sent")
+    const formErrors = validateForm();
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      return;
+    }
 
-   }catch(e){
-if(e?.response.data.error){
-  alert(e?.response?.data?.error)
-}else{
-  alert("Client error please try again")
-}
-   }
+    setIsSubmitting(true);
+    setErrors({});
+    
+    try {
+      let response = await axios.post(`https://datazapptoolbackend.vercel.app/forgetpassword`, formData);
+      setSubmitStatus('success');
+      alert("Reset password link sent");
+    } catch (e) {
+      setSubmitStatus('error');
+      const errorMsg = e?.response?.data?.error || "Client error please try again";
+      setErrorMessage(errorMsg);
+      alert(errorMsg);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRetry = async () => {
+    // Reset UI state first
+    setSubmitStatus('idle');
+    setErrorMessage('');
+    setErrors({});
+    
+    // Then immediately attempt to resend
+    await handleSubmit();
+  };
+
+  const getButtonContent = () => {
+    if (isSubmitting) {
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className={styles.spinner}></div>
+          Sending link...
+        </div>
+      );
+    }
+    
+    if (submitStatus === 'success') {
+      return 'Link Sent Successfully ✓';
+    }
+    
+    if (submitStatus === 'error') {
+      return 'Send Failed - Try Again';
+    }
+    
+    return 'Send reset link';
+  };
+
+  const getButtonStyle = () => {
+    const baseStyle = { marginTop: '1rem' };
+    
+    if (submitStatus === 'success') {
+      return { ...baseStyle, backgroundColor: '#10b981', borderColor: '#10b981' };
+    }
+    
+    if (submitStatus === 'error') {
+      return { ...baseStyle, backgroundColor: '#ef4444', borderColor: '#ef4444' };
+    }
+    
+    return baseStyle;
   };
 
   return (
@@ -66,7 +127,6 @@ if(e?.response.data.error){
           
           <div className={styles.brandContent}>
             <img src="https://www.enrichifydata.com/wp-content/uploads/2024/11/WhatsApp_Image_2024-11-24_at_8.44.26_PM-removebg-preview.png"/>
-            
             
             <h2 className={styles.heading}>
               Welcome Back to
@@ -121,46 +181,131 @@ if(e?.response.data.error){
                 {errors.email && <p className={styles.error}>{errors.email}</p>}
               </div>
 
-              {/* Password */}
+              {/* Password field (keeping it as in original - seems unused) */}
               <div className={styles.formGroup}>
-               
                 <div className={styles.passwordInput}>
-                 
-                <button
-  type="button"
-  onClick={() => setShowPassword(!showPassword)}
-  className={styles.toggle}
->
- 
-</button>
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className={styles.toggle}
+                  >
+                  </button>
                 </div>
                 {errors.password && <p className={styles.error}>{errors.password}</p>}
               </div>
 
-              {/* Forgot Password Link */}
-              {/* <div className={styles.forgot}>
-                <span className={styles.forgotLink}>Forgot your password?</span>
-              </div> */}
+              {/* Error Message Display */}
+              {submitStatus === 'error' && errorMessage && (
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: '#fef2f2', 
+                  border: '1px solid #fecaca', 
+                  borderRadius: '6px', 
+                  color: '#dc2626',
+                  fontSize: '14px',
+                  marginTop: '1rem'
+                }}>
+                  <strong>Error:</strong> {errorMessage}
+                </div>
+              )}
+
+              {/* Success Message Display */}
+              {submitStatus === 'success' && (
+                <div style={{ 
+                  padding: '12px', 
+                  backgroundColor: '#f0fdf4', 
+                  border: '1px solid #bbf7d0', 
+                  borderRadius: '6px', 
+                  color: '#166534',
+                  fontSize: '14px',
+                  marginTop: '1rem'
+                }}>
+                  <strong>Success:</strong> Reset password link has been sent to your email!
+                </div>
+              )}
 
               {/* Submit Button */}
               <button
-  type="button"
-  onClick={handleSubmit}
-  style={{marginTop:'1rem'}}
-  disabled={isSubmitting}
-  className={styles.submitButton}
->
-  {isSubmitting ? (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-      <div className={styles.spinner}></div>
-      Sending link...
-    </div>
-  ) : (
-    'Send reset link'
-  )}
-</button>
+                type="button"
+                onClick={handleSubmit}
+                style={getButtonStyle()}
+                disabled={isSubmitting}
+                className={styles.submitButton}
+              >
+                {getButtonContent()}
+              </button>
 
-           
+              {/* Retry Button */}
+              {submitStatus === 'error' && (
+                <button
+                  type="button"
+                  onClick={handleRetry}
+                  style={{
+                    marginTop: '0.5rem',
+                    padding: '12px 24px',
+                    backgroundColor: 'transparent',
+                    border: '2px solid #6b7280',
+                    borderRadius: '6px',
+                    color: '#6b7280',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    width: '100%',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.backgroundColor = '#6b7280';
+                    e.target.style.color = 'white';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.color = '#6b7280';
+                  }}
+                >
+                  <RefreshCw size={16} />
+                  Try Again
+                </button>
+              )}
+
+              {/* Send Another Link Button (for success state) */}
+              {submitStatus === 'success' && (
+                <button
+                  type="button"
+                  onClick={handleRetry}
+                  style={{
+                    marginTop: '0.5rem',
+                    padding: '12px 24px',
+                    backgroundColor: 'transparent',
+                    border: '2px solid #10b981',
+                    borderRadius: '6px',
+                    color: '#10b981',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    width: '100%',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseOver={(e) => {
+                    e.target.style.backgroundColor = '#10b981';
+                    e.target.style.color = 'white';
+                  }}
+                  onMouseOut={(e) => {
+                    e.target.style.backgroundColor = 'transparent';
+                    e.target.style.color = '#10b981';
+                  }}
+                >
+                  <RefreshCw size={16} />
+                  Send Another Link
+                </button>
+              )}
             </div>
           </div>
         </div>
