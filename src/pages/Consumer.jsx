@@ -156,8 +156,11 @@ const Suppression = () => {
   }
   console.log("DATA")
   console.log(data)
-let response=await axios.post('https://datazapptoolbackend.vercel.app/sendData',data)
-alert("We’re on it one of our team members will be in touch shortly with the next steps.")
+// Update the API endpoint to send to support@enrichifydata.com
+let response=await axios.post('https://datazapptoolbackend.vercel.app/sendData',{
+  ...data,
+  recipient: 'support@enrichifydata.com'
+})
 setState({
 campaign_type: '',
       phone_options: '',
@@ -202,7 +205,7 @@ alert("Server error please try again")
   }, []);
 
   const skipSuppression = useCallback(async() => {
-    setShowSuppressionView(false);
+    setShowSuppressionView(false) ;
     setState((prev)=>{
       return{
         ...state,
@@ -212,7 +215,6 @@ alert("Server error please try again")
     })
     console.log("STATE")
     console.log(state)
-    alert('Proceeding to results...');
     try{
       let data={
         ...state,
@@ -221,7 +223,11 @@ alert("Server error please try again")
       }
       console.log("DATA")
       console.log(data)
-let response=await axios.post('https://datazapptoolbackend.vercel.app/sendData',data)
+// Update the API endpoint to send to support@enrichifydata.com
+let response=await axios.post('https://datazapptoolbackend.vercel.app/sendData',{
+  ...data,
+  recipient: 'support@enrichifydata.com'
+})
 setState({
   campaign_type: '',
         phone_options: '',
@@ -258,7 +264,8 @@ setState({
         save_name: '',
         supression_option:''
 })
-alert("We’re on it one of our team members will be in touch shortly with the next steps.")
+alert("Enrichiment process has started")
+
 window.location.reload(true)
     }catch(e){
 alert("Server problem, please try again")
@@ -310,6 +317,9 @@ alert("Server problem, please try again")
     setIsDragOver(true);
   }, []);
 
+  useEffect(()=>{
+    skipSuppression();
+  },[])
   const handleDragLeave = useCallback((e) => {
     e.preventDefault();
     setIsDragOver(false);
@@ -385,455 +395,240 @@ alert("Server problem, please try again")
     return <Demographics/>;
   }
 
- 
-
-
   return (
-    <div className="campaign-builder">
-    {/* Background Pattern */}
-    <div className="background-pattern">
-    <div className="background-gradient" />
-    <div className="gradient-blob-top" />
-    <div className="gradient-blob-bottom" />
-    </div>
-    
-    {/* Tab Navigation */}
-    <div className="tab-container">
-    <div className="tab-wrapper">
-    <div className="tab-nav">
-    <div className="tab-buttons">
-    <button
-    onClick={() => setActiveTab('consumer')}
-    className={`tab-button ${
-    activeTab === 'consumer'
-    ? 'tab-button-active'
-    : 'tab-button-inactive'
-    }`}
-    >
-    Consumer
-    </button>
-    <button
-    onClick={() => setActiveTab('geography')}
-    className={`tab-button ${
-    activeTab === 'geography'
-    ? 'tab-button-active'
-    : 'tab-button-inactive'
-    }`}
-    >
-    Geography
-    </button>
-
-    
-    <button
-                onClick={() => setActiveTab('demographics')}
-                className={`tab-button ${
-                  activeTab === 'geography'
-                    ? 'tab-button-active'
-                    : 'tab-button-inactive'
-                }`}
-              >
-               Demographics
-              </button>
-
-              <button
-                onClick={() => setActiveTab('supression')}
-                className={`tab-button ${
-                  activeTab === 'geography'
-                    ? 'tab-button-active'
-                    : 'tab-button-inactive'
-                }`}
-              >
-               Supression
-              </button>
-    </div>
-    </div>
-    </div>
-    </div>
-    
-    <div className="content-wrapper">
-      
-    <div className="main-card">
-    <div style={{width:'75vw'}} className="header-container">
-          <div className="header-icon">
-            <MapPin size={24} color="white" />
-          </div>
-          <h1 className="header-title">Campaign Builder</h1>
-          <p className="header-subtitle">Configure your Supression preferences</p>
+    <>
+  <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column'
+    }}>
+      {/* Background Pattern */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: -10
+      }}>
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
          
-        </div>
-    <div className="card-grid">
-    <div className="min-h-screen bg-gray-50 p-6">
+        }} />
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: '384px',
+          height: '384px',
+         
+          borderRadius: '50%',
+          filter: 'blur(72px)'
+        }} />
+        <div style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          width: '384px',
+          height: '384px',
+          
+          borderRadius: '50%',
+          filter: 'blur(72px)'
+        }} />
+      </div>
       
-
-      {!showSuppressionView ? (
-        <div className="dvSupp">
-          <button className="card-btn suppress-card" onClick={suppressionLoad}>
-            <Database className="card-icon" />
-            <div className="card-title">Suppress Past Orders</div>
-            <div className="card-desc">
-              Exclude duplicates from previous purchases using mailing addresses, emails, or phone numbers. 
-              This step ensures you only receive new, unique data for your next campaign
-            </div>
-          </button>
-          <button className="card-btn skip-card" onClick={skipSuppression}>
-            <ArrowRight className="card-icon" />
-            <div className="card-title">Skip Suppression</div>
-            <div className="card-desc">Proceed to Result</div>
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {/* Header Controls */}
-          <div className="flex justify-between items-center">
-            <button
-              onClick={() => alert('Running count...')}
-              className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200 hover:scale-105 shadow-lg"
-            >
-              Run Count
-            </button>
-            <div className="text-sm text-gray-600">
-              Selected Files: {Array.from(selectedFiles).join(', ')}
-            </div>
-          </div>
-
-          {/* Main Content Area */}
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="flex">
-              {/* Left Sidebar */}
-              <div className="w-1/4 border-r border-gray-200 p-4">
-                <button
-                  onClick={() => setShowNewListModal(true)}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg mb-4 flex items-center gap-2"
-                >
-                  <Plus size={16} />
-                  Add Folder
-                </button>
-                <div className="space-y-2">
-                  <div className="bg-blue-500 text-white p-2 rounded cursor-pointer">
-                    Global Folder
-                  </div>
-                  <div className="hover:bg-gray-100 p-2 rounded cursor-pointer">
-                    Campaign Files
-                  </div>
-                  <div className="hover:bg-gray-100 p-2 rounded cursor-pointer">
-                    Suppression Lists
-                  </div>
-                </div>
+      {/* Tab Navigation */}
+   
+      {/* Main Content - Properly Centered */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '48px 24px'
+      }}>
+        <div style={{
+          width: '100%',
+          maxWidth: '1024px'
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            padding: '48px'
+          }}>
+            {/* Header */}
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '32px'
+            }}>
+              <div style={{
+               width:'100%',
+               display:'flex',
+               justifyContent:'center',
+               alignItems:'center'
+              }}>
+                    <img style={{width:'50%'}} src="https://www.enrichifydata.com/wp-content/uploads/2024/11/WhatsApp_Image_2024-11-24_at_8.44.26_PM-removebg-preview.png" alt="Enrichify Logo" />
+            
               </div>
-
-              {/* Right Content */}
-              <div className="flex-1 p-4">
-                <div className="flex justify-between items-center mb-4">
-                  <button
-                    onClick={() => setShowUploadModal(true)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center gap-2"
+              <h1 style={{
+                fontSize: '36px',
+                fontWeight: 'bold',
+                color: '#111827',
+                margin: '0 0 16px 0'
+              }}>
+                Thank You for Choosing Enrichify
+              </h1>
+              <div style={{
+                width: '96px',
+                height: '4px',
+                backgroundColor: '#3b82f6',
+                margin: '0 auto',
+                borderRadius: '2px'
+              }}></div>
+            </div>
+            
+            {/* Content */}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '24px',
+              textAlign: 'left',
+              maxWidth: '768px',
+              margin: '0 auto'
+            }}>
+              <p style={{
+                fontSize: '18px',
+                color: '#374151',
+                lineHeight: '1.75',
+                margin: '0'
+              }}>
+                We are currently processing your data request, and one of our data specialists will reach out within{' '}
+                <span style={{ fontWeight: '600', color: '#2563eb' }}>24–48 hours</span> to discuss the lead volume and pricing details.
+              </p>
+              
+              <p style={{
+                fontSize: '18px',
+                color: '#374151',
+                lineHeight: '1.75',
+                margin: '0'
+              }}>
+                Please note that our pricing is based on the average cost for your industry, ensuring you receive{' '}
+                <span style={{ fontWeight: '600', color: '#059669' }}>competitive and fair rates</span>. Our goal is to provide you with the best lead experience possible.
+              </p>
+              
+              <div style={{
+                backgroundColor: '#eff6ff',
+                borderLeft: '4px solid #60a5fa',
+                padding: '24px',
+                borderRadius: '0 8px 8px 0'
+              }}>
+                <p style={{
+                  fontSize: '18px',
+                  color: '#374151',
+                  lineHeight: '1.75',
+                  margin: '0'
+                }}>
+                  If you have any immediate questions, feel free to contact us at{' '}
+                  <a 
+                    href="mailto:support@enrichifydata.com" 
+                    style={{
+                      fontWeight: '600',
+                      color: '#2563eb',
+                      textDecoration: 'none'
+                    }}
+                    onMouseOver={(e) => e.target.style.textDecoration = 'underline'}
+                    onMouseOut={(e) => e.target.style.textDecoration = 'none'}
                   >
-                    <Upload size={16} />
-                    Upload File
-                  </button>
-                  
-                  <input
-                    type="text"
-                    placeholder="Search files..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  />
-                </div>
-
-                {/* Data Table */}
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse bg-white">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        <th className="p-3 text-center border border-gray-200">
-                          <input
-                            type="checkbox"
-                            checked={selectAll}
-                            onChange={handleSelectAll}
-                            className="h-4 w-4"
-                          />
-                        </th>
-                        <th 
-                          className="p-3 text-left border border-gray-200 cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort('fileName')}
-                        >
-                          File Name {sortConfig.key === 'fileName' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th 
-                          className="p-3 text-center border border-gray-200 cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort('token')}
-                        >
-                          Token {sortConfig.key === 'token' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th 
-                          className="p-3 text-right border border-gray-200 cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort('totalPhone')}
-                        >
-                          Total Phone {sortConfig.key === 'totalPhone' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th 
-                          className="p-3 text-right border border-gray-200 cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort('totalEmail')}
-                        >
-                          Total Email {sortConfig.key === 'totalEmail' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th 
-                          className="p-3 text-right border border-gray-200 cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort('totalPostal')}
-                        >
-                          Total Postal {sortConfig.key === 'totalPostal' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                        </th>
-                        <th 
-                          className="p-3 text-right border border-gray-200 cursor-pointer hover:bg-gray-100"
-                          onClick={() => handleSort('totalIP')}
-                        >
-                          Total IP {sortConfig.key === 'totalIP' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {currentData.map((item) => (
-                        <tr key={item.id} className="hover:bg-gray-50">
-                          <td className="p-3 text-center border border-gray-200">
-                            <input
-                              type="checkbox"
-                              checked={selectedFiles.has(item.id)}
-                              onChange={(e) => handleFileSelect(item.id, e.target.checked)}
-                              className="h-4 w-4"
-                            />
-                          </td>
-                          <td className="p-3 border border-gray-200">{item.fileName}</td>
-                          <td className="p-3 text-center border border-gray-200">{item.token}</td>
-                          <td className="p-3 text-right border border-gray-200">{item.totalPhone.toLocaleString()}</td>
-                          <td className="p-3 text-right border border-gray-200">{item.totalEmail.toLocaleString()}</td>
-                          <td className="p-3 text-right border border-gray-200">{item.totalPostal.toLocaleString()}</td>
-                          <td className="p-3 text-right border border-gray-200">{item.totalIP.toLocaleString()}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Pagination */}
-                <div className="flex justify-between items-center mt-4">
-                  <div className="text-sm text-gray-600">
-                    Showing {startIndex + 1} to {Math.min(endIndex, filteredData.length)} of {filteredData.length} entries
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                      disabled={currentPage === 1}
-                      className="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50"
-                    >
-                      Previous
-                    </button>
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-3 py-1 border rounded ${
-                          currentPage === page 
-                            ? 'bg-blue-500 text-white' 
-                            : 'hover:bg-gray-100'
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    ))}
-                    <button
-                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                      disabled={currentPage === totalPages}
-                      className="px-3 py-1 border rounded hover:bg-gray-100 disabled:opacity-50"
-                    >
-                      Next
-                    </button>
-                  </div>
-                </div>
+                    support@enrichifydata.com
+                  </a>
+                </p>
+              </div>
+              
+              <p style={{
+                fontSize: '18px',
+                color: '#374151',
+                lineHeight: '1.75',
+                margin: '0'
+              }}>
+                We look forward to working with you and helping you achieve outstanding results.
+              </p>
+              
+              <div style={{
+                textAlign: 'center',
+                paddingTop: '24px'
+              }}>
+                <p style={{
+                  fontSize: '20px',
+                  fontWeight: '600',
+                  color: '#1f2937',
+                  margin: '0'
+                }}>
+                  Best regards,
+                </p>
+                <p style={{
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  color: '#2563eb',
+                  margin: '8px 0 0 0'
+                }}>
+                  The Enrichify Team
+                </p>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Upload Modal */}
-      {showUploadModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Upload File</h2>
-              <button
-                onClick={() => {
-                  setShowUploadModal(false);
-                  resetFile();
-                }}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {/* Folder Selection */}
-              <div className="flex items-center gap-4">
-                <label className="font-medium w-32">Folder Name:</label>
-                <select
-                  value={selectedListName}
-                  onChange={(e) => setSelectedListName(e.target.value)}
-                  className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="0">Select Name</option>
-                  <option value="Global">Global</option>
-                  <option value="Campaign">Campaign</option>
-                  <option value="Suppression">Suppression</option>
-                </select>
-              </div>
-
-              {/* File Upload Area */}
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <div
-                  className={`space-y-4 ${isDragOver ? 'bg-blue-50' : ''}`}
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={handleDrop}
-                >
-                  <Upload size={48} className="mx-auto text-gray-400" />
-                  <div>
-                    <p className="text-lg font-medium">Drop files here</p>
-                    <p className="text-gray-600 mt-2">
-                      {uploadedFile ? `Selected: ${uploadedFile.name}` : 'No File chosen'}
-                    </p>
-                    <button
-                      onClick={() => fileInputRef.current?.click()}
-                      className="mt-4 bg-white border border-gray-300 px-6 py-2 rounded-lg hover:bg-gray-50 flex items-center gap-2 mx-auto"
-                    >
-                      <FileInput size={20} />
-                      Upload File
-                    </button>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      onChange={handleFileInputChange}
-                      accept=".txt,.csv,.xlsx,.xls"
-                      className="hidden"
+            
+            {/* Footer */}
+            <div style={{
+              marginTop: '40px',
+              paddingTop: '24px',
+              borderTop: '1px solid #e5e7eb'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '16px'
+              }}>
+                <div style={{
+                  width: '32px',
+                  height: '32px',
+                  backgroundColor: '#3b82f6',
+                  borderRadius: '50%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <svg 
+                    style={{ width: '20px', height: '20px', color: 'white' }} 
+                    fill="currentColor" 
+                    viewBox="0 0 20 20"
+                  >
+                    <path 
+                      fillRule="evenodd" 
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
+                      clipRule="evenodd" 
                     />
-                  </div>
+                  </svg>
                 </div>
-              </div>
-
-              {/* Field Mapping */}
-              {showFieldMapping && mappingData && (
-                <div className="border rounded-lg p-4 bg-gray-50">
-                  <h3 className="font-semibold mb-4">Field Mapping</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <label className="font-medium w-32">File Type:</label>
-                      <select className="flex-1 p-2 border border-gray-300 rounded-lg">
-                        <option value="1">Postal</option>
-                        <option value="7">Email And/Or Phone</option>
-                        <option value="8">Visitor Pixel</option>
-                      </select>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4 max-h-48 overflow-y-auto">
-                      {mappingData.sourceColumns.map((col, index) => (
-                        <div key={index} className="flex items-center gap-2">
-                          <label className="w-20 text-sm">{col}:</label>
-                          <select className="flex-1 p-1 border border-gray-300 rounded text-sm">
-                            <option value="NA">NA</option>
-                            {mappingData.columnList.map((targetCol, idx) => (
-                              <option key={idx} value={targetCol}>{targetCol}</option>
-                            ))}
-                          </select>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-4 pt-4">
-                <button
-                  onClick={resetFile}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-                >
-                  Clear
-                </button>
-                <button
-                  onClick={submitMapping}
-                  disabled={loading || !uploadedFile || selectedListName === '0'}
-                  className="px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                >
-                  {loading && <RefreshCw size={16} className="animate-spin" />}
-                  Submit
-                </button>
+                <span style={{
+                  fontSize: '18px',
+                  fontWeight: '500',
+                  color: '#374151'
+                }}>
+                  Your request has been successfully submitted
+                </span>
               </div>
             </div>
           </div>
         </div>
-      )}
-
-      {/* New List Modal */}
-      {showNewListModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Add New List</h2>
-              <button
-                onClick={() => setShowNewListModal(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <X size={24} />
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-4">
-                <label className="font-medium w-32">Folder Name*:</label>
-                <input
-                  type="text"
-                  value={newGroupName}
-                  onChange={(e) => setNewGroupName(e.target.value)}
-                  className="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter folder name"
-                />
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-4 pt-6">
-              <button
-                onClick={() => setShowNewListModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
-              >
-                Close
-              </button>
-              <button
-                onClick={addNewGroup}
-                className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-              >
-                Add
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Loading Overlay */}
-      {loading && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 flex items-center gap-4">
-            <RefreshCw size={24} className="animate-spin text-blue-500" />
-            <span>Processing...</span>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
-    </div>
-    </div>
-    </div>
-    
-    </div>
+  </>
+      
   );
 };
 
@@ -2362,6 +2157,9 @@ const handleMoveLeft = () => {
     { value: '$200,000 - $249,999', label: '$200,000 - $249,999', selected: false },
     { value: '$250,000 +', label: '$250,000 +', selected: false }
   ]);
+
+  //tooltips
+  const [showDwellingTooltip, setShowDwellingTooltip] = useState(false);
   
 
   const [selectedIncome, setSelectedIncome] = useState([
@@ -2804,6 +2602,21 @@ setState((prev)=>{
     }
   };
 
+
+  const handleDownload = (filename) => {
+    // Create a link element
+    const link = document.createElement('a');
+    link.href = `/${filename}`; // Path to your file in public folder
+    link.download = filename; // Name for the downloaded file
+    link.style.display = 'none';
+    
+    // Append to body, click, and remove
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
   const handleOutdoorMoveRight = () => {
     if (highlightedAvailable.length > 0) {
       const itemsToMove = highlightedAvailable.map(value => 
@@ -3197,23 +3010,32 @@ Geography
           <ul className="panel-group" style={{ marginRight: '0px', backgroundColor: 'white', borderColor: 'white' }}>
             {/* Household Section */}
             <li className="portlet ui-state-default">
-              <div 
-                className="portlet-header1 ui-widget-header2" 
-                onClick={() => toggleSection('household')}
-                style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
-              >
-                Household  
-                <span 
-                  className={`glyphicon ${activeSections.household ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
-                  style={{ float: 'right', marginRight: '5px' }}
-                ></span>
-                <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
-                  <a className="help-document" href="#" alt="Help" title="Help">
-                    <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-                    <span className="glyphicon glyphicon-question-sign"></span>
-                  </a>
-                </div>
-              </div>
+            <div 
+  className="portlet-header1 ui-widget-header2" 
+  onClick={() => toggleSection('household')}
+  style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
+>
+  Household  
+  <span 
+    className={`glyphicon ${activeSections.household ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
+    style={{ float: 'right', marginRight: '5px' }}
+  ></span>
+  <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
+    <a className="help-document" href="#" alt="Help" title="Help">
+    <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>
+        View Data Dictionary
+      </span>
+      <span className="relative inline-block">
+        <span 
+          className="glyphicon glyphicon-question-sign cursor-help"
+          onMouseEnter={()=>handleDownload("Household Data.docx")}
+          title="Download Household Data.docx"
+        ></span>
+      
+      </span>
+    </a>
+  </div>
+</div>
               {activeSections.household && (
                 <ul className="panel-collapse collapse" style={{ marginTop: '10px', height: 'auto', marginLeft: '12px', overflow: 'hidden', display: 'block' }}>
                   <li>
@@ -3404,8 +3226,16 @@ Geography
     ></span>
     <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
       <a className="help-document" href="#" alt="Help" title="Help" onClick={() => DisplayHelpDialog('Individuals', '../TermsPDF/PDFFiles/Individuals.pdf')}>
-        <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span className="glyphicon glyphicon-question-sign"></span>
+      <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>
+        View Data Dictionary
+      </span>
+      <span className="relative inline-block">
+        <span 
+          className="glyphicon glyphicon-question-sign cursor-help"
+          onMouseEnter={() => handleDownload('Individuals.docx')}
+          title="Download Individuals.docx"
+        ></span>
+      </span>
       </a>
     </div>
   </div>
@@ -3796,7 +3626,12 @@ Geography
         }}
       >
         <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span className="glyphicon glyphicon-question-sign"></span>
+       
+      <span 
+        className="glyphicon glyphicon-question-sign cursor-help"
+        onMouseEnter={() => handleDownload('Donor Affinity Data Dictionary.docx')}
+        title="Download Donor Affinity Data Dictionary.docx">
+      </span>
       </a>
     </div>
   </div>
@@ -3937,7 +3772,12 @@ Geography
         }}
       >
         <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span className="glyphicon glyphicon-question-sign"></span>
+        <span 
+        className="glyphicon glyphicon-question-sign cursor-help"
+        onMouseEnter={() => handleDownload('Turning 65 Data.docx')}
+        title="Download Turning 65 Data.docx">
+      </span>
+
       </a>
     </div>
   </div>
@@ -4020,7 +3860,11 @@ Geography
         }}
       >
         <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span className="glyphicon glyphicon-question-sign"></span>
+        <span 
+        className="glyphicon glyphicon-question-sign cursor-help"
+        onMouseEnter={() => handleDownload('Pets.docx')}
+        title="Download Pets.docx">
+      </span>
       </a>
     </div>
   </div>
@@ -4108,7 +3952,11 @@ Geography
         }}
       >
         <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span className="glyphicon glyphicon-question-sign"></span>
+        <span 
+        className="glyphicon glyphicon-question-sign cursor-help"
+        onMouseEnter={() => handleDownload('Propensity.docx')}
+        title="Download Propensity.docx">
+      </span>
       </a>
     </div>
   </div>
@@ -4207,7 +4055,12 @@ Geography
         }}
       >
         <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span className="glyphicon glyphicon-question-sign"></span>
+       
+        <span 
+        className="glyphicon glyphicon-question-sign cursor-help"
+        onMouseEnter={() => handleDownload('Outdoor.docx')}
+        title="Download Outdoor.docx">
+      </span>
       </a>
     </div>
   </div>
@@ -4299,7 +4152,11 @@ Geography
         }}
       >
         <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span className="glyphicon glyphicon-question-sign"></span>
+        <span 
+        className="glyphicon glyphicon-question-sign cursor-help"
+        onMouseEnter={() => handleDownload('Sports Fitness.docx')}
+        title="Download Sports Fitness.docx">
+      </span>
       </a>
     </div>
   </div>
@@ -4390,7 +4247,11 @@ Geography
         }}
       >
         <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span className="glyphicon glyphicon-question-sign"></span>
+        <span 
+        className="glyphicon glyphicon-question-sign cursor-help"
+        onMouseEnter={() => handleDownload('Travel Hobbies.docx')}
+        title="Download Travel Hobbies.docx">
+      </span>
       </a>
     </div>
   </div>
@@ -4484,11 +4345,18 @@ Geography
         }}
       >
         <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span className="glyphicon glyphicon-question-sign"></span>
+        <span 
+        className="glyphicon glyphicon-question-sign cursor-help"
+        onMouseEnter={() => handleDownload('Genre Books Magazines Web TV.docx')}
+        title="Download Genre Books Magazines Web TV.docx">
+      </span>
       </a>
     </div>
-  </div>
 
+  
+
+  </div>
+ 
   {activeSections.genreBooks && (
   <ul className="panel-collapse collapse" style={{ marginTop: '10px', height: 'auto', marginLeft: '12px', overflow: 'hidden', display: 'block' }}>
     <li>
@@ -4551,35 +4419,18 @@ Geography
   </ul>
 )}
 </li>
+<div className="row">
+    <button 
+                className="primary-button" 
+               
+              >
+                Continue
+              </button>
+          </div>
         </div>
         
         <div className="col-md-3 col-sm-3">
-          <div className="row">
-            <div className="col-md-12">
-              <a 
-              onClick={()=>{
-                setActiveTab('supression')
-              }}
-                href="#" 
-                id="btncontinue_New" 
-                style={{ 
-                  textDecoration: 'none', 
-                  padding: '3%', 
-                  backgroundColor: 'rgb(255,107,1)', 
-                  color: 'white', 
-                  fontWeight: 'bold', 
-                  borderRadius: '5px', 
-                  display: 'block', 
-                  textAlign: 'center', 
-                  fontSize: 'x-large', 
-                  width: '100%'
-                }}
-              >
-                Continue
-              </a>
-            </div>
-          </div>
-
+      
           <div className="row">
             <div className="col-md-10">
               {/* <label><b><u>Campaign Type : </u></b></label> */}
@@ -5823,6 +5674,7 @@ console.log(state)
                   
                 
                 </div>
+
 
                 {/* Campaign Type Section */}
                 <div className="filter-card">

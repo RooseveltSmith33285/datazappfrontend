@@ -112,8 +112,9 @@ if(e?.response.data.error){
         <div className={styles.formSection}>
           <div className={styles.formContainer}>
             <div className={styles.mobileLogo}>
-              <Database className={styles.mobileIcon} />
-              <h1>DataFlow Pro</h1>
+            <img style={{width:'70%'}} src="https://www.enrichifydata.com/wp-content/uploads/2024/11/WhatsApp_Image_2024-11-24_at_8.44.26_PM-removebg-preview.png" alt="Enrichify Logo" />
+            
+       
             </div>
             
             <div className={styles.formHeader}>

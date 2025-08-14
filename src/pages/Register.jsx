@@ -135,6 +135,7 @@ const RegistrationPage = () => {
       <div className={styles.card}>
         {/* Left Side - Branding */}
         <div className={styles.branding}>
+          
           <div className={styles.circleTop}></div>
           <div className={styles.circleBottom}></div>
           
@@ -149,6 +150,28 @@ const RegistrationPage = () => {
             <p className={styles.description}>
               Join thousands of professionals who trust ENRICHIFY for enterprise-grade data solutions and real-time insights.
             </p>
+
+            {/* Database Statistics */}
+            <div className={styles.databaseStats}>
+              <div className={styles.statsHeader}>
+                <Database className={styles.databaseIcon} />
+                <h3>National Consumer Database</h3>
+              </div>
+              <div className={styles.statsGrid}>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>218M</span>
+                  <span className={styles.statLabel}>Records</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>82M</span>
+                  <span className={styles.statLabel}>Emails</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>76M</span>
+                  <span className={styles.statLabel}>Cell Phones</span>
+                </div>
+              </div>
+            </div>
             
             <div className={styles.features}>
               <div className={styles.feature}>
@@ -171,13 +194,20 @@ const RegistrationPage = () => {
         <div className={styles.formSection}>
           <div className={styles.formContainer}>
             <div className={styles.mobileLogo}>
-              <Database className={styles.mobileIcon} />
-              <h1>ENRICHIFY</h1>
+            <img style={{width:'70%'}} src="https://www.enrichifydata.com/wp-content/uploads/2024/11/WhatsApp_Image_2024-11-24_at_8.44.26_PM-removebg-preview.png" alt="Enrichify Logo" />
+            
+        
             </div>
             
             <div className={styles.formHeader}>
               <h2>Create Account</h2>
               <p>Start your data journey today</p>
+              
+              {/* Mobile Database Stats */}
+              <div className={styles.mobileDatabaseStats}>
+                <p><strong>Access our National Consumer Database:</strong></p>
+                <p>218M records • 82M emails • 76M cell phones</p>
+              </div>
             </div>
 
             <div className={styles.formFields}>
