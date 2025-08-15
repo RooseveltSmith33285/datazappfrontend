@@ -2602,18 +2602,50 @@ setState((prev)=>{
     }
   };
 
+  const fileMapping = {
+    'Sports Fitness.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284152/Sports_Fitness_nzqnbm.docx',
+    'Travel Hobbies.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284150/Travel_Hobbies_dippjb.docx',
+    'Turning 65 Data.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284150/Turning_65_Data_vpksax.docx',
+    'Propensity.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284151/Propensity_ffqj0t.docx',
+    'Pets.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284151/Pets_mghfct.docx',
+    'Outdoor.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284151/Outdoor_yfr4k2.docx',
+    'Life Style.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284151/Life_Style_xvd5ch.docx',
+    'Individuals.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284151/Individuals_gzc0gj.docx',
+    'Household Data.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284151/Household_Data_czdiea.docx',
+    'Genre Books Magazines Web TV.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284150/Genre_Books_Magazines_Web_TV_rbqa25.docx',
+    'Donor Affinity Data Dictionary.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284150/Donor_Affinity_Data_Dictionary_a1t5xp.docx',
+    'Consumer Homeowner Data Dictionary.docx': 'https://res.cloudinary.com/dbjwbveqn/raw/upload/v1755284150/Consumer_Homeowner_Data_Dictionary_dcsbbm.docx'
+  };
 
   const handleDownload = (filename) => {
-    // Create a link element
-    const link = document.createElement('a');
-    link.href = `/${filename}`; // Path to your file in public folder
-    link.download = filename; // Name for the downloaded file
-    link.style.display = 'none';
+    console.log('Opening file:', filename);
     
-    // Append to body, click, and remove
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    // Get the Cloudinary URL for this file
+    const cloudinaryUrl = fileMapping[filename];
+    
+    if (!cloudinaryUrl) {
+      alert('File not found. Please contact support.');
+      console.error('No Cloudinary URL found for:', filename);
+      return;
+    }
+    
+    const fileExtension = filename.split('.').pop().toLowerCase();
+    
+    // For PDFs, open directly
+    if (fileExtension === 'pdf') {
+      window.open(cloudinaryUrl, '_blank');
+      return;
+    }
+    
+    // For Office documents, use Google Docs Viewer
+    if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx'].includes(fileExtension)) {
+      const viewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(cloudinaryUrl)}&embedded=true`;
+      window.open(viewerUrl, '_blank');
+      return;
+    }
+    
+    // For other files, try direct opening
+    window.open(cloudinaryUrl, '_blank');
   };
 
 
@@ -2924,16 +2956,7 @@ Geography
                Demographics
               </button>
 
-              <button
-                onClick={() => setActiveTab('supression')}
-                className={`tab-button ${
-                  activeTab === 'geography'
-                    ? 'tab-button-active'
-                    : 'tab-button-inactive'
-                }`}
-              >
-               Supression
-              </button>
+             
 </div>
 </div>
 </div>
@@ -2949,7 +2972,7 @@ Geography
           <div className="header-icon">
             <MapPin size={24} color="white" />
           </div>
-          <h1 className="header-title">Campaign Builder</h1>
+          <h1 className="header-title">Organic Lead List Builder</h1>
           <p className="header-subtitle">Configure your demographics preferences</p>
          
         </div>
@@ -4421,10 +4444,13 @@ Geography
 </li>
 <div className="row">
     <button 
+    onClick={()=>{
+      setActiveTab('supression')
+    }}
                 className="primary-button" 
                
               >
-                Continue
+              Submit request
               </button>
           </div>
         </div>
@@ -5167,16 +5193,7 @@ const Geography = () => {
                Demographics
               </button>
 
-              <button
-                onClick={() => setActiveTab('supression')}
-                className={`tab-button ${
-                  activeTab === 'geography'
-                    ? 'tab-button-active'
-                    : 'tab-button-inactive'
-                }`}
-              >
-               Supression
-              </button>
+          
             </div>
           </div>
         </div>
@@ -5192,7 +5209,7 @@ const Geography = () => {
           <div className="header-icon">
             <MapPin size={24} color="white" />
           </div>
-          <h1 className="header-title">Campaign Builder</h1>
+          <h1 className="header-title">Organic Lead List Builder</h1>
           <p className="header-subtitle">Configure your geographic targeting preferences</p>
           
         </div>
@@ -5438,10 +5455,23 @@ const Geography = () => {
                   <MapPin size={16} /> Geographic Selection
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div className="summary-item">
-                    <span className="summary-label">Selected States:</span> 
-                    <span className="geography-value">{formData.states.filter(s => s.checked).length}</span>
-                  </div>
+                <div className="summary-item">
+  <span className="summary-label">Selected States:</span>
+  <div className="geography-value states-container">
+    {formData.states.filter(s => s.checked).length > 0 ? (
+      formData.states
+        .filter(s => s.checked)
+        .map((val, i, array) => (
+          <span key={i}>
+            <span className="state-tag">{val.code}</span>
+            {i < array.length - 1 ? ', ' : ''}
+          </span>
+        ))
+    ) : (
+      <span className="no-selection">None selected</span>
+    )}
+  </div>
+</div>
                   <div className="summary-item">
                     <span className="summary-label">Selected Cities:</span> 
                     <span className="geography-value">{selectedItems.cities.length}</span>
@@ -5640,17 +5670,7 @@ console.log(state)
                Demographics
               </button>
 
-              <button
-                onClick={() => setActiveTab('supression')}
-                className={`tab-button ${
-                  activeTab === 'geography'
-                    ? 'tab-button-active'
-                    : 'tab-button-inactive'
-                }`}
-              >
-               Supression
-              </button>
-
+            
             </div>
           </div>
         </div>
@@ -5667,7 +5687,7 @@ console.log(state)
           <div className="header-icon">
             <Database size={24} color="white" />
           </div>
-          <h1 className="header-title">Campaign Builder</h1>
+          <h1 className="header-title">Organic Lead List Builder</h1>
           <p className="header-subtitle">Configure your consumer preferences</p>
          
         </div>
@@ -5921,15 +5941,7 @@ console.log(state)
                 </p>
               </div>
 
-              <div style={{ textAlign: 'center' }}>
-                <button 
-                  className="reset-button"
-                  onClick={() => setShowSampleModal(true)}
-                >
-                  Generic Sample
-                  <HelpCircle style={{ width: '16px', height: '16px' }} />
-                </button>
-              </div>
+            
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <div className="feature-badge feature-badge-green">

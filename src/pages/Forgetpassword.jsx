@@ -4,9 +4,10 @@ import styles from './LoginPage.module.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Forgetpassword = () => {
+const ResetPassword = () => {
   const [formData, setFormData] = useState({
-    email: ''
+    email: '',
+    password: ''
   });
   
   const navigate = useNavigate();
@@ -43,6 +44,12 @@ const Forgetpassword = () => {
       newErrors.email = 'Please enter a valid email';
     }
     
+    if (!formData.password.trim()) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters long';
+    }
+    
     return newErrors;
   };
 
@@ -57,9 +64,11 @@ const Forgetpassword = () => {
     setErrors({});
     
     try {
-      let response = await axios.post(`https://datazapptoolbackend.vercel.app/forgetpassword`, formData);
+      let response = await axios.post(`https://datazapptoolbackend.vercel.app/resetpassword`, formData);
       setSubmitStatus('success');
-      alert("Reset password link sent");
+      alert("Password reset successfully");
+      // Optionally navigate to login page after successful reset
+      // navigate('/login');
     } catch (e) {
       setSubmitStatus('error');
       const errorMsg = e?.response?.data?.error || "Client error please try again";
@@ -85,20 +94,20 @@ const Forgetpassword = () => {
       return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div className={styles.spinner}></div>
-          Sending link...
+          Resetting password...
         </div>
       );
     }
     
     if (submitStatus === 'success') {
-      return 'Link Sent Successfully ✓';
+      return 'Password Reset Successfully ✓';
     }
     
     if (submitStatus === 'error') {
-      return 'Send Failed - Try Again';
+      return 'Reset Failed - Try Again';
     }
     
-    return 'Send reset link';
+    return 'Reset Password';
   };
 
   const getButtonStyle = () => {
@@ -154,7 +163,7 @@ const Forgetpassword = () => {
           </div>
         </div>
 
-        {/* Right Side - Login Form */}
+        {/* Right Side - Reset Password Form */}
         <div className={styles.formSection}>
           <div className={styles.formContainer}>
             <div className={styles.mobileLogo}>
@@ -163,8 +172,8 @@ const Forgetpassword = () => {
             </div>
             
             <div className={styles.formHeader}>
-              <h2>Forget password</h2>
-              <p>Get reset password link to reset password</p>
+              <h2>Reset Password</h2>
+              <p>Enter your email and new password to reset your account</p>
             </div>
 
             <div className={styles.fields}>
@@ -181,14 +190,23 @@ const Forgetpassword = () => {
                 {errors.email && <p className={styles.error}>{errors.email}</p>}
               </div>
 
-              {/* Password field (keeping it as in original - seems unused) */}
+              {/* New Password */}
               <div className={styles.formGroup}>
+                <label>New Password</label>
                 <div className={styles.passwordInput}>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your new password"
+                  />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className={styles.toggle}
                   >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
                 {errors.password && <p className={styles.error}>{errors.password}</p>}
@@ -220,7 +238,7 @@ const Forgetpassword = () => {
                   fontSize: '14px',
                   marginTop: '1rem'
                 }}>
-                  <strong>Success:</strong> Reset password link has been sent to your email!
+                  <strong>Success:</strong> Your password has been reset successfully!
                 </div>
               )}
 
@@ -271,11 +289,11 @@ const Forgetpassword = () => {
                 </button>
               )}
 
-              {/* Send Another Link Button (for success state) */}
+              {/* Go to Login Button (for success state) */}
               {submitStatus === 'success' && (
                 <button
                   type="button"
-                  onClick={handleRetry}
+                  onClick={() => navigate('/login')}
                   style={{
                     marginTop: '0.5rem',
                     padding: '12px 24px',
@@ -302,8 +320,7 @@ const Forgetpassword = () => {
                     e.target.style.color = '#10b981';
                   }}
                 >
-                  <RefreshCw size={16} />
-                  Send Another Link
+                  Go to Login
                 </button>
               )}
             </div>
@@ -314,4 +331,4 @@ const Forgetpassword = () => {
   );
 };
 
-export default Forgetpassword;
+export default ResetPassword;
