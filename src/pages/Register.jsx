@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Database, Shield, Zap, Globe, X, Lock } from 'lucide-react';
 import styles from './RegistrationPage.module.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const RegistrationPage = () => {
   const [formData, setFormData] = useState({
@@ -14,12 +15,14 @@ const RegistrationPage = () => {
     agreeToTerms: false
   });
   
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
 
+  const navigate=useNavigate();
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -111,6 +114,8 @@ const RegistrationPage = () => {
           agreeToTerms: false
         });
       }, 2000);
+      localStorage.setItem("user",JSON.stringify(response.data.user))
+      navigate('/consumer')
     } catch(e) {
       setIsSubmitting(false);
       if(e?.response?.data?.error) {

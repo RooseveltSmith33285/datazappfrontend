@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useCallback,useRef,useContext } from 'react';
+import { Country, State, City }  from 'country-state-city';
 
 import './Consumer.css'; 
 
@@ -2177,62 +2178,159 @@ const handleMoveLeft = () => {
     }));
   };
 
+
   const handleDwellingTypeChange = (type) => {
     setDwellingType(prev => ({
       ...prev,
       [type]: !prev[type]
     }));
-setState((prev)=>{
-  return {
-    ...prev,
-    dwelling_type:[...prev.dwelling_type,type]
-  }
-})
+  
+    setState((prev) => {
+      const isCurrentlyChecked = prev.dwelling_type.includes(type);
+      
+      return {
+        ...prev,
+        dwelling_type: isCurrentlyChecked 
+          ? prev.dwelling_type.filter(item => item !== type) // Remove if currently checked
+          : [...prev.dwelling_type, type] // Add if not currently checked
+      }
+    });
+  };
+
+  const handleSelectAllDwellingTypes = () => {
+    const allSelected = dwellingType.multipleFamily && dwellingType.singleFamily;
+    const newState = !allSelected;
     
+    setDwellingType({
+      multipleFamily: newState,
+      singleFamily: newState
+    });
+  
+    setState((prev) => {
+      return {
+        ...prev,
+        dwelling_type: newState 
+          ? ['multipleFamily', 'singleFamily'] // Add all if selecting all
+          : [] // Remove all if deselecting all
+      }
+    });
   };
 
   const handleHomeOwnerChange = (type) => {
+    const newCheckedState = !homeOwner[type];
+    
     setHomeOwner(prev => ({
       ...prev,
-      [type]: !prev[type]
+      [type]: newCheckedState
     }));
-
-    setState((prev)=>{
+  
+    setState((prev) => {
       return {
         ...prev,
-        home_owner:[...prev.home_owner,type]
+        home_owner: newCheckedState 
+          ? [...prev.home_owner, type] // Add if checking
+          : prev.home_owner.filter(item => item !== type) // Remove if unchecking
       }
-    })
+    });
   };
+  const handleSelectAllHomeOwnerTypes = () => {
+    const allSelected = homeOwner.homeOwner && homeOwner.renter;
+    const newState = !allSelected;
+    
+    setHomeOwner({
+      homeOwner: newState,
+      renter: newState
+    });
+  
+    setState((prev) => {
+      return {
+        ...prev,
+        home_owner: newState 
+          ? ['homeOwner', 'renter'] // Add all if selecting all
+          : [] // Remove all if deselecting all
+      }
+    });
+  };
+
+  
+
 
   const handleGenderChange = (type) => {
+    const newCheckedState = !gender[type];
+    
     setGender(prev => ({
       ...prev,
-      [type]: !prev[type]
+      [type]: newCheckedState
     }));
-
-    setState((prev)=>{
+  
+    setState((prev) => {
       return {
         ...prev,
-        indivisuals:[...prev.indivisuals,!prev[type]]
+        indivisuals: newCheckedState 
+          ? [...prev.indivisuals, type] // Add if checking
+          : prev.indivisuals.filter(item => item !== type) // Remove if unchecking
       }
-    })
+    });
   };
+
+  const handleSelectAllGenders = () => {
+    const allSelected = gender.male && gender.female;
+    const newState = !allSelected;
+    
+    setGender({
+      male: newState,
+      female: newState
+    });
+  
+    setState((prev) => {
+      return {
+        ...prev,
+        indivisuals: newState 
+          ? ['male', 'female'] // Add all if selecting all
+          : [] // Remove all if deselecting all
+      }
+    });
+  };
+
+  
+
+
+  const maritalStatusOptions = ['married', 'single'];
 
   const handleMaritalStatusChange = (type) => {
-    setMaritalStatus(prev => ({
-      ...prev,
-      [type]: !prev[type]
-    }));
-
-    setState((prev)=>{
+    console.log(type);
+    
+    setState((prev) => {
+      const currentStatus = Array.isArray(prev.martial_status) ? prev.martial_status : [];
+      const isCurrentlyChecked = currentStatus.includes(type);
+      
       return {
         ...prev,
-        martial_status:[...prev.martial_status,!prev[type]]
-      }
-    })
+        martial_status: isCurrentlyChecked 
+          ? currentStatus.filter(item => item !== type) // Remove if currently checked
+          : [...currentStatus, type] // Add if not currently checked
+      };
+    });
   };
-
+  
+  // Check if all options are selected
+  const isAllSelected = () => {
+    const currentStatus = Array.isArray(state.martial_status) ? state.martial_status : [];
+    return maritalStatusOptions.length > 0 && maritalStatusOptions.every(option => currentStatus.includes(option));
+  };
+  
+  // Handle select all functionality
+  const handleSelectAll = () => {
+    setState((prev) => {
+      const currentStatus = Array.isArray(prev.martial_status) ? prev.martial_status : [];
+      const allSelected = maritalStatusOptions.every(option => currentStatus.includes(option));
+      
+      return {
+        ...prev,
+        martial_status: allSelected ? [] : [...maritalStatusOptions] // If all selected, clear all; otherwise select all
+      };
+    });
+  };
 
   useEffect(() => {
     // Restore all form data from context state when component mounts
@@ -2418,17 +2516,26 @@ setState((prev)=>{
   ]);
 
   const handleDonorSelectBoxAffinityChange = (field) => {
+    const newCheckedState = !donorAffinity[field];
+    
     setDonorAffinity(prev => ({
       ...prev,
-      [field]: !prev[field]
+      [field]: newCheckedState
     }));
-  setState((prev)=>{
-    return{
-      ...prev,
-      propensity_to_give:!prev[field]
-    }
-  })
+  
+    setState((prev) => {
+      return {
+        ...prev,
+        propensity_to_give: newCheckedState 
+          ? [...prev.propensity_to_give, field] // Add if checking
+          : prev.propensity_to_give.filter(item => item !== field) // Remove if unchecking
+      }
+    });
   };
+
+
+  const donorAffinityOptions = ['notLikely', 'likely', 'veryLikely']; // Define all available options
+
   const handleDonorAffinityChange = (value) => {
     setState(prev => {
       // Check if value already exists in array
@@ -2445,6 +2552,27 @@ setState((prev)=>{
       };
     });
   };
+  
+  // Check if all donor affinity options are selected
+  const isDonorAllSelected = () => {
+    const currentPropensity = Array.isArray(state.propensity_to_give) ? state.propensity_to_give : [];
+    return donorAffinityOptions.length > 0 && donorAffinityOptions.every(option => currentPropensity.includes(option));
+  };
+  
+  // Handle select all functionality for donor affinity
+  const handleDonorSelectAll = () => {
+    setState(prev => {
+      const currentPropensity = Array.isArray(prev.propensity_to_give) ? prev.propensity_to_give : [];
+      const allSelected = donorAffinityOptions.every(option => currentPropensity.includes(option));
+      
+      return {
+        ...prev,
+        propensity_to_give: allSelected ? [] : [...donorAffinityOptions] // If all selected, clear all; otherwise select all
+      };
+    });
+  };
+
+
   const moveIncomeOption = (direction, index) => {
     if (direction === 'right') {
       const item = incomeOptions[index];
@@ -3043,9 +3171,9 @@ Geography
     className={`glyphicon ${activeSections.household ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
     style={{ float: 'right', marginRight: '5px' }}
   ></span>
-  <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
+  <div className="col-sm-3" style={{ float: 'right', width: '45%', marginRight: '15px' }}>
     <a className="help-document" href="#" alt="Help" title="Help">
-    <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>
+      <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>
         View Data Dictionary
       </span>
       <span className="relative inline-block">
@@ -3054,7 +3182,6 @@ Geography
           onMouseEnter={()=>handleDownload("Household Data.docx")}
           title="Download Household Data.docx"
         ></span>
-      
       </span>
     </a>
   </div>
@@ -3065,36 +3192,51 @@ Geography
                     <div className="panel panel-default col-md-5" style={{ padding: '0' }}>
                       <div className="panel-heading panelheading-title">Dwelling Type</div>
                       <div className="panel-body" id="dvDwelling" style={{ maxHeight: 'auto' }}>
-                        <table id="tbl_DwellingType" cellSpacing="4" cellPadding="1">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <span title="Multiple Family Dwelling Unit">
-                                  <input 
-                                    id="chkBox_MultipleFamilyDwellingUnit" 
-                                    type="checkbox" 
-                                    name="chkBox_DwellingType" 
-                                    value="M" 
-                                    checked={dwellingType.multipleFamily}
-                                    onChange={() => handleDwellingTypeChange('multipleFamily')}
-                                  />
-                                  <label htmlFor="chkBox_MultipleFamilyDwellingUnit">Multiple Family</label>
-                                </span>
-                                <span title="Single Family Dwelling Unit">
-                                  <input 
-                                    id="chkBox_SingleFamilyDwellingUnit" 
-                                    type="checkbox" 
-                                    name="chkBox_DwellingType" 
-                                    value="S" 
-                                    checked={dwellingType.singleFamily}
-                                    onChange={() => handleDwellingTypeChange('singleFamily')}
-                                  />
-                                  <label htmlFor="chkBox_SingleFamilyDwellingUnit">Single Family</label>
-                                </span>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                      <table id="tbl_DwellingType" cellSpacing="4" cellPadding="1">
+  <tbody>
+    <tr>
+      <td>
+        <span title="Select All Dwelling Types">
+          <input 
+            id="chkBox_AllDwellingTypes" 
+            type="checkbox" 
+            name="chkBox_DwellingType" 
+            value="all" 
+            checked={dwellingType.multipleFamily && dwellingType.singleFamily}
+            onChange={handleSelectAllDwellingTypes}
+          />
+          <label htmlFor="chkBox_AllDwellingTypes">Select All</label>
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span title="Multiple Family Dwelling Unit">
+          <input 
+            id="chkBox_MultipleFamilyDwellingUnit" 
+            type="checkbox" 
+            name="chkBox_DwellingType" 
+            value="M" 
+            checked={dwellingType.multipleFamily}
+            onChange={() => handleDwellingTypeChange('multipleFamily')}
+          />
+          <label htmlFor="chkBox_MultipleFamilyDwellingUnit">Multiple Family</label>
+        </span>
+        <span title="Single Family Dwelling Unit">
+          <input 
+            id="chkBox_SingleFamilyDwellingUnit" 
+            type="checkbox" 
+            name="chkBox_DwellingType" 
+            value="S" 
+            checked={dwellingType.singleFamily}
+            onChange={() => handleDwellingTypeChange('singleFamily')}
+          />
+          <label htmlFor="chkBox_SingleFamilyDwellingUnit">Single Family</label>
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
                         {/* <div className="dwellingDiv">
                           <input 
                             type="button" 
@@ -3121,38 +3263,53 @@ Geography
                     <div className="panel panel-default col-md-7" style={{ padding: '0' }}>
                       <div className="panel-heading panelheading-title">Home Owner</div>
                       <div className="panel-body" id="dvHomeOwner">
-                        <table id="tbl_HomeOwner" cellSpacing="4" cellPadding="1">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <span title="Home Owner">
-                                  <input 
-                                    id="chkBox_HomeOwner" 
-                                    type="checkbox" 
-                                    name="chkBox_HomeOwner" 
-                                    value="H" 
-                                    checked={homeOwner.homeOwner}
-                                    onChange={() => handleHomeOwnerChange('homeOwner')}
-                                  />
-                                  <label htmlFor="chkBox_HomeOwner">Home Owner</label>
-                                </span>
-                              </td>
-                              <td>
-                                <span title="Renter">
-                                  <input 
-                                    id="chkBox_Renter" 
-                                    type="checkbox" 
-                                    name="chkBox_HomeOwner" 
-                                    value="R" 
-                                    checked={homeOwner.renter}
-                                    onChange={() => handleHomeOwnerChange('renter')}
-                                  />
-                                  <label htmlFor="chkBox_Renter">Renter</label>
-                                </span>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                      <table id="tbl_HomeOwner" cellSpacing="4" cellPadding="1">
+  <tbody>
+    <tr>
+      <td colSpan="2">
+        <span title="Select All Home Owner Types">
+          <input 
+            id="chkBox_AllHomeOwnerTypes" 
+            type="checkbox" 
+            name="chkBox_HomeOwner" 
+            value="all" 
+            checked={homeOwner.homeOwner && homeOwner.renter}
+            onChange={handleSelectAllHomeOwnerTypes}
+          />
+          <label htmlFor="chkBox_AllHomeOwnerTypes">Select All</label>
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span title="Home Owner">
+          <input 
+            id="chkBox_HomeOwner" 
+            type="checkbox" 
+            name="chkBox_HomeOwner" 
+            value="H" 
+            checked={homeOwner.homeOwner}
+            onChange={() => handleHomeOwnerChange('homeOwner')}
+          />
+          <label htmlFor="chkBox_HomeOwner">Home Owner</label>
+        </span>
+      </td>
+      <td>
+        <span title="Renter">
+          <input 
+            id="chkBox_Renter" 
+            type="checkbox" 
+            name="chkBox_HomeOwner" 
+            value="R" 
+            checked={homeOwner.renter}
+            onChange={() => handleHomeOwnerChange('renter')}
+          />
+          <label htmlFor="chkBox_Renter">Renter</label>
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
                         {/* <div>
                           <input 
                             type="button" 
@@ -3237,18 +3394,18 @@ Geography
 
             {/* Individuals Section */}
             <li className="portlet ui-state-default">
-  <div 
-    className="portlet-header1 ui-widget-header2" 
-    onClick={() => toggleSection('individuals')}
-    style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
-  >
-    Individuals 
-    <span 
-      className={`glyphicon ${activeSections.individuals ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
-      style={{ float: 'right', marginRight: '5px' }}
-    ></span>
-    <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
-      <a className="help-document" href="#" alt="Help" title="Help" onClick={() => DisplayHelpDialog('Individuals', '../TermsPDF/PDFFiles/Individuals.pdf')}>
+            <div 
+  className="portlet-header1 ui-widget-header2" 
+  onClick={() => toggleSection('individuals')}
+  style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
+>
+  Individuals 
+  <span 
+    className={`glyphicon ${activeSections.individuals ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
+    style={{ float: 'right', marginRight: '5px' }}
+  ></span>
+  <div className="col-sm-3" style={{ float: 'right', width: '45%', marginRight: '15px' }}>
+    <a className="help-document" href="#" alt="Help" title="Help" onClick={() => DisplayHelpDialog('Individuals', '../TermsPDF/PDFFiles/Individuals.pdf')}>
       <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>
         View Data Dictionary
       </span>
@@ -3259,9 +3416,10 @@ Geography
           title="Download Individuals.docx"
         ></span>
       </span>
-      </a>
-    </div>
+    </a>
   </div>
+</div>
+
   {activeSections.individuals && (
     <ul className="panel-collapse collapse" style={{ marginTop: '10px', height: 'auto', marginLeft: '12px', overflow: 'hidden', display: 'block' }}>
       <style dangerouslySetInnerHTML={{
@@ -3305,40 +3463,58 @@ Geography
         <div className="panel panel-default col-md-6" style={{ padding: 0 }}>
           <div className="panel-heading panelheading-title">Gender</div>
           <div className="panel-body" id="dvGender">
-            <table id="tbl_Gender" cellSpacing="4" cellPadding="1">
-              <tbody>
-                <tr>
-                  <td>
-                    <span title="MALE">
-                      <input 
-                        id="chkBox_Male" 
-                        type="checkbox" 
-                        name="chkBox_Gender" 
-                        value="M" 
-                        checked={gender.male}
-                        onChange={() => handleGenderChange('male')}
-                        autoComplete="off"
-                      />
-                      <label htmlFor="chkBox_Male">Male</label>
-                    </span>
-                  </td>
-                  <td>
-                    <span title="FEMALE">
-                      <input 
-                        id="chkBox_Female" 
-                        type="checkbox" 
-                        name="chkBox_Gender" 
-                        value="F" 
-                        checked={gender.female}
-                        onChange={() => handleGenderChange('female')}
-                        autoComplete="off"
-                      />
-                      <label htmlFor="chkBox_Female">Female</label>
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <table id="tbl_Gender" cellSpacing="4" cellPadding="1">
+  <tbody>
+    <tr>
+      <td colSpan="2">
+        <span title="Select All Genders">
+          <input 
+            id="chkBox_AllGenders" 
+            type="checkbox" 
+            name="chkBox_Gender" 
+            value="all" 
+            checked={gender.male && gender.female}
+            onChange={handleSelectAllGenders}
+            autoComplete="off"
+          />
+          <label htmlFor="chkBox_AllGenders">Select All</label>
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span title="MALE">
+          <input 
+            id="chkBox_Male" 
+            type="checkbox" 
+            name="chkBox_Gender" 
+            value="M" 
+            checked={gender.male}
+            onChange={() => handleGenderChange('male')}
+            autoComplete="off"
+          />
+          <label htmlFor="chkBox_Male">Male</label>
+        </span>
+      </td>
+      <td>
+        <span title="FEMALE">
+          <input 
+            id="chkBox_Female" 
+            type="checkbox" 
+            name="chkBox_Gender" 
+            value="F" 
+            checked={gender.female}
+            onChange={() => handleGenderChange('female')}
+            autoComplete="off"
+          />
+          <label htmlFor="chkBox_Female">Female</label>
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
             {/* <div>
               <input 
                 type="button" 
@@ -3366,40 +3542,56 @@ Geography
         <div className="panel panel-default col-md-6" style={{ padding: 0 }}>
           <div className="panel-heading panelheading-title">Marital Status</div>
           <div className="panel-body" align="center" id="dvMaritalStatus">
-            <table id="tbl_MaritalStatus" cellSpacing="4" cellPadding="1">
-              <tbody>
-                <tr>
-                  <td>
-                    <span title="Married">
-                      <input 
-                        id="chkBox_Married" 
-                        type="checkbox" 
-                        name="chkBox_MaritalStatus" 
-                        value="M" 
-                        checked={maritalStatus.married}
-                        onChange={() => handleMaritalStatusChange('married')}
-                        autoComplete="off"
-                      />
-                      <label htmlFor="chkBox_Married">Married</label>
-                    </span>
-                  </td>
-                  <td>
-                    <span title="Single">
-                      <input 
-                        id="chkBox_Single" 
-                        type="checkbox" 
-                        name="chkBox_MaritalStatus" 
-                        value="S" 
-                        checked={maritalStatus.single}
-                        onChange={() => handleMaritalStatusChange('single')}
-                        autoComplete="off"
-                      />
-                      <label htmlFor="chkBox_Single">Single</label>
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <table id="tbl_MaritalStatus" cellSpacing="4" cellPadding="1">
+  <tbody>
+    <tr>
+      <td>
+        <span title="Select All">
+          <input 
+            id="chkBox_SelectAll" 
+            type="checkbox" 
+            name="chkBox_MaritalStatus" 
+            value="ALL" 
+            checked={isAllSelected()}
+            onChange={handleSelectAll}
+            autoComplete="off"
+          />
+          <label htmlFor="chkBox_SelectAll">Select All</label>
+        </span>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <span title="Married">
+          <input 
+            id="chkBox_Married" 
+            type="checkbox" 
+            name="chkBox_MaritalStatus" 
+            value="M" 
+            checked={state.martial_status === 'married' || (Array.isArray(state.martial_status) && state.martial_status.includes('married'))}
+            onChange={() => handleMaritalStatusChange('married')}
+            autoComplete="off"
+          />
+          <label htmlFor="chkBox_Married">Married</label>
+        </span>
+      </td>
+      <td>
+        <span title="Single">
+          <input 
+            id="chkBox_Single" 
+            type="checkbox" 
+            name="chkBox_MaritalStatus" 
+            value="S" 
+            checked={state.martial_status === 'single' || (Array.isArray(state.martial_status) && state.martial_status.includes('single'))}
+            onChange={() => handleMaritalStatusChange('single')}
+            autoComplete="off"
+          />
+          <label htmlFor="chkBox_Single">Single</label>
+        </span>
+      </td>
+    </tr>
+  </tbody>
+</table>
             {/* <div>
               <input 
                 type="button" 
@@ -3627,37 +3819,37 @@ Geography
 
             {/* Donor Affinity Section */}
             <li className="portlet ui-state-default">
-  <div 
-    className="portlet-header1 ui-widget-header2" 
-    onClick={() => toggleSection('donorAffinity')}
-    style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
-  >
-    Donor Affinity
+            <div 
+  className="portlet-header1 ui-widget-header2" 
+  onClick={() => toggleSection('donorAffinity')}
+  style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
+>
+  Donor Affinity
+  <span 
+    className={`glyphicon ${activeSections.donorAffinity ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
+    style={{ float: 'right', marginRight: '5px' }}
+  ></span>
+  <div className="col-sm-3" style={{ float: 'right', width: '45%', marginRight: '15px' }}>
+    <a 
+      className="help-document" 
+      href="#" 
+      alt="Help" 
+      title="Help" 
+      onClick={(e) => {
+        e.preventDefault();
+        DisplayHelpDialog('Donor Affinity', '../TermsPDF/PDFFiles/Donor Affinity.pdf');
+      }}
+    >
+      <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
+     
     <span 
-      className={`glyphicon ${activeSections.donorAffinity ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
-      style={{ float: 'right', marginRight: '5px' }}
-    ></span>
-    <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
-      <a 
-        className="help-document" 
-        href="#" 
-        alt="Help" 
-        title="Help" 
-        onClick={(e) => {
-          e.preventDefault();
-          DisplayHelpDialog('Donor Affinity', '../TermsPDF/PDFFiles/Donor Affinity.pdf');
-        }}
-      >
-        <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-       
-      <span 
-        className="glyphicon glyphicon-question-sign cursor-help"
-        onMouseEnter={() => handleDownload('Donor Affinity Data Dictionary.docx')}
-        title="Download Donor Affinity Data Dictionary.docx">
-      </span>
-      </a>
-    </div>
+      className="glyphicon glyphicon-question-sign cursor-help"
+      onMouseEnter={() => handleDownload('Donor Affinity Data Dictionary.docx')}
+      title="Download Donor Affinity Data Dictionary.docx">
+    </span>
+    </a>
   </div>
+</div>
   
   {activeSections.donorAffinity && (
     <ul className="panel-collapse collapse" style={{ marginTop: '10px', marginLeft: '12px', overflow: 'hidden', display: 'block' }}>
@@ -3667,55 +3859,68 @@ Geography
 </td>
         <div className="panel-body" style={{ paddingTop: '0px !important' }}>
           <div>
-            <table>
-              <tbody>
-                <tr>
-                  <td style={{ paddingBottom: '4%' }}>
-                    <b>Propensity to Give</b>
-                  </td>
-                  <td>
-                    <div className="panel-body" style={{ margin: '5px 5px 5px 10px', padding: '5px 5px 5px 10px', textAlign: 'center' }} id="dvDonor" data-title="Propensity to Give">
-                      <span title="Not Likely" style={{ display: 'none' }}>
-                        <input 
-                          id="chkBox_DonorNotLikely" 
-                          type="checkbox" 
-                          name="chkBox_DonorNotLikely" 
-                          value="0" 
-                          autoComplete="off"
-                          checked={donorAffinity.notLikely}
-                          onChange={() => handleDonorAffinityChange('notLikely')}
-                        />
-                        <label htmlFor="chkBox_DonorNotLikely">Unknown</label>
-                      </span>
-                      <span title="Likely">
-                        <input 
-                          id="chkBox_DonorLikely" 
-                          type="checkbox" 
-                          name="chkBox_DonorLikely" 
-                          value="1-70" 
-                          autoComplete="off"
-                          checked={donorAffinity.likely}
-                          onChange={() => handleDonorSelectBoxAffinityChange('likely')}
-                        />
-                        <label htmlFor="chkBox_DonorLikely">LIKELY</label>
-                      </span>
-                      <span title="VeryLikely">
-                        <input 
-                          id="chkBox_DonorVeryLikely" 
-                          type="checkbox" 
-                          name="chkBox_DonorVeryLikely" 
-                          value="71-100" 
-                          autoComplete="off"
-                          checked={donorAffinity.veryLikely}
-                          onChange={() => handleDonorSelectBoxAffinityChange('veryLikely')}
-                        />
-                        <label htmlFor="chkBox_DonorVeryLikely">VERY LIKELY</label>
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+         <table>
+  <tbody>
+    <tr>
+      <td style={{ paddingBottom: '4%' }}>
+        <b>Propensity to Give</b>
+      </td>
+      <td>
+        <div className="panel-body" style={{ margin: '5px 5px 5px 10px', padding: '5px 5px 5px 10px', textAlign: 'center' }} id="dvDonor" data-title="Propensity to Give">
+          <span title="Select All">
+            <input 
+              id="chkBox_DonorSelectAll" 
+              type="checkbox" 
+              name="chkBox_DonorSelectAll" 
+              value="ALL" 
+              autoComplete="off"
+              checked={isDonorAllSelected()}
+              onChange={handleDonorSelectAll}
+            />
+            <label htmlFor="chkBox_DonorSelectAll">Select All</label>
+          </span>
+          <span title="Not Likely" style={{ display: 'none' }}>
+            <input 
+              id="chkBox_DonorNotLikely" 
+              type="checkbox" 
+              name="chkBox_DonorNotLikely" 
+              value="0" 
+              autoComplete="off"
+              checked={donorAffinity.notLikely}
+              onChange={() => handleDonorAffinityChange('notLikely')}
+            />
+            <label htmlFor="chkBox_DonorNotLikely">Unknown</label>
+          </span>
+          <span title="Likely">
+            <input 
+              id="chkBox_DonorLikely" 
+              type="checkbox" 
+              name="chkBox_DonorLikely" 
+              value="1-70" 
+              autoComplete="off"
+              checked={donorAffinity.likely}
+              onChange={() => handleDonorAffinityChange('likely')}
+            />
+            <label htmlFor="chkBox_DonorLikely">LIKELY</label>
+          </span>
+          <span title="VeryLikely">
+            <input 
+              id="chkBox_DonorVeryLikely" 
+              type="checkbox" 
+              name="chkBox_DonorVeryLikely" 
+              value="71-100" 
+              autoComplete="off"
+              checked={donorAffinity.veryLikely}
+              onChange={() => handleDonorAffinityChange('veryLikely')}
+            />
+            <label htmlFor="chkBox_DonorVeryLikely">VERY LIKELY</label>
+          </span>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
           </div>
           
           <table align="center">
@@ -3773,37 +3978,36 @@ Geography
             {/* Other sections would follow the same pattern */}
             {/* Turning 65, Pet, Propensity, Life Style, Outdoor, Sports & Fitness, Travel & Hobbies, Genre:Books/Magazines/Web TV */}
             <li className="portlet ui-state-default">
-  <div 
-    className="portlet-header1 ui-widget-header2" 
-    onClick={() => toggleSection('turning65')}
-    style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
-  >
-    Turning 65
-    <span 
-      className={`glyphicon ${activeSections.turning65 ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
-      style={{ float: 'right', marginRight: '5px' }}
-    ></span>
-    <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
-      <a 
-        className="help-document" 
-        href="#" 
-        alt="Help" 
-        title="Help" 
-        onClick={(e) => {
-          e.preventDefault();
-          DisplayHelpDialog('Turning 65', '../TermsPDF/PDFFiles/Turning 65.pdf');
-        }}
-      >
-        <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span 
+            <div 
+  className="portlet-header1 ui-widget-header2" 
+  onClick={() => toggleSection('turning65')}
+  style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
+>
+  Turning 65
+  <span 
+    className={`glyphicon ${activeSections.turning65 ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
+    style={{ float: 'right', marginRight: '5px' }}
+  ></span>
+  <div className="col-sm-3" style={{ float: 'right', width: '45%', marginRight: '15px' }}>
+    <a 
+      className="help-document" 
+      href="#" 
+      alt="Help" 
+      title="Help" 
+      onClick={(e) => {
+        e.preventDefault();
+        DisplayHelpDialog('Turning 65', '../TermsPDF/PDFFiles/Turning 65.pdf');
+      }}
+    >
+      <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
+      <span 
         className="glyphicon glyphicon-question-sign cursor-help"
         onMouseEnter={() => handleDownload('Turning 65 Data.docx')}
         title="Download Turning 65 Data.docx">
       </span>
-
-      </a>
-    </div>
+    </a>
   </div>
+</div>
 
   {activeSections.turning65 && (
     <ul className="panel-collapse collapse" style={{ marginLeft: '12px', marginTop: '5px', overflow: 'hidden', display: 'block' }}>
@@ -3861,37 +4065,36 @@ Geography
 
 
           <li className="portlet ui-state-default">
-  <div 
-    className="portlet-header1 ui-widget-header2" 
-    onClick={() => toggleSection('pet')}
-    style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
-  >
-    Pet
-    <span 
-      className={`glyphicon ${activeSections.pet ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
-      style={{ float: 'right', marginRight: '5px' }}
-    ></span>
-    <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
-      <a 
-        className="help-document" 
-        href="#" 
-        alt="Help" 
-        title="Help" 
-        onClick={(e) => {
-          e.preventDefault();
-          DisplayHelpDialog('Pets', '../TermsPDF/PDFFiles/Pets.pdf');
-        }}
-      >
-        <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span 
+          <div 
+  className="portlet-header1 ui-widget-header2" 
+  onClick={() => toggleSection('pet')}
+  style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
+>
+  Pet
+  <span 
+    className={`glyphicon ${activeSections.pet ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
+    style={{ float: 'right', marginRight: '5px' }}
+  ></span>
+  <div className="col-sm-3" style={{ float: 'right', width: '45%', marginRight: '15px' }}>
+    <a 
+      className="help-document" 
+      href="#" 
+      alt="Help" 
+      title="Help" 
+      onClick={(e) => {
+        e.preventDefault();
+        DisplayHelpDialog('Pets', '../TermsPDF/PDFFiles/Pets.pdf');
+      }}
+    >
+      <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
+      <span 
         className="glyphicon glyphicon-question-sign cursor-help"
         onMouseEnter={() => handleDownload('Pets.docx')}
         title="Download Pets.docx">
       </span>
-      </a>
-    </div>
+    </a>
   </div>
-
+</div>
   {activeSections.pet && (
     <ul className="panel-collapse collapse" role="tabpanel" style={{ marginLeft: '12px', marginTop: '5px', overflow: 'hidden', display: 'block' }}>
       <li>
@@ -3953,36 +4156,36 @@ Geography
 
 
 <li className="portlet ui-state-default">
-  <div 
-    className="portlet-header1 ui-widget-header2" 
-    onClick={() => toggleSection('propensity')}
-    style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
-  >
-    Propensity
-    <span 
-      className={`glyphicon ${activeSections.propensity ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
-      style={{ float: 'right', marginRight: '5px' }}
-    ></span>
-    <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
-      <a 
-        className="help-document" 
-        href="#" 
-        alt="Help" 
-        title="Help" 
-        onClick={(e) => {
-          e.preventDefault();
-          DisplayHelpDialog('Propensity', '../TermsPDF/PDFFiles/Propensity Dictionary.pdf');
-        }}
-      >
-        <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span 
+<div 
+  className="portlet-header1 ui-widget-header2" 
+  onClick={() => toggleSection('propensity')}
+  style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
+>
+  Propensity
+  <span 
+    className={`glyphicon ${activeSections.propensity ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
+    style={{ float: 'right', marginRight: '5px' }}
+  ></span>
+  <div className="col-sm-3" style={{ float: 'right', width: '45%', marginRight: '15px' }}>
+    <a 
+      className="help-document" 
+      href="#" 
+      alt="Help" 
+      title="Help" 
+      onClick={(e) => {
+        e.preventDefault();
+        DisplayHelpDialog('Propensity', '../TermsPDF/PDFFiles/Propensity Dictionary.pdf');
+      }}
+    >
+      <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
+      <span 
         className="glyphicon glyphicon-question-sign cursor-help"
         onMouseEnter={() => handleDownload('Propensity.docx')}
         title="Download Propensity.docx">
       </span>
-      </a>
-    </div>
+    </a>
   </div>
+</div>
 
   {activeSections.propensity && (
   <ul className="panel-collapse collapse" style={{ marginTop: '10px', height: 'auto', marginLeft: '12px', overflow: 'hidden', display: 'block' }}>
@@ -4056,38 +4259,37 @@ Geography
 </li>
 
 <li className="portlet ui-state-default">
-  <div 
-    className="portlet-header1 ui-widget-header2" 
-    onClick={() => toggleSection('outdoor')}
-    style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
-  >
-    Outdoor
-    <span 
-      className={`glyphicon ${activeSections.outdoor ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
-      style={{ float: 'right', marginRight: '5px' }}
-    ></span>
-    <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
-      <a 
-        className="help-document" 
-        href="#" 
-        alt="Help" 
-        title="Help" 
-        onClick={(e) => {
-          e.preventDefault();
-          DisplayHelpDialog('Outdoor', '../TermsPDF/PDFFiles/Outdoor.pdf');
-        }}
-      >
-        <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-       
-        <span 
+<div 
+  className="portlet-header1 ui-widget-header2" 
+  onClick={() => toggleSection('outdoor')}
+  style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
+>
+  Outdoor
+  <span 
+    className={`glyphicon ${activeSections.outdoor ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
+    style={{ float: 'right', marginRight: '5px' }}
+  ></span>
+  <div className="col-sm-3" style={{ float: 'right', width: '45%', marginRight: '15px' }}>
+    <a 
+      className="help-document" 
+      href="#" 
+      alt="Help" 
+      title="Help" 
+      onClick={(e) => {
+        e.preventDefault();
+        DisplayHelpDialog('Outdoor', '../TermsPDF/PDFFiles/Outdoor.pdf');
+      }}
+    >
+      <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
+     
+      <span 
         className="glyphicon glyphicon-question-sign cursor-help"
         onMouseEnter={() => handleDownload('Outdoor.docx')}
         title="Download Outdoor.docx">
       </span>
-      </a>
-    </div>
+    </a>
   </div>
-
+</div>
   {activeSections.outdoor && (
   <ul className="panel-collapse collapse" style={{ marginTop: '10px', height: 'auto', marginLeft: '12px', overflow: 'hidden', display: 'block' }}>
     <li>
@@ -4153,36 +4355,37 @@ Geography
 </li>
 
 <li className="portlet ui-state-default">
-  <div 
-    className="portlet-header1 ui-widget-header2" 
-    onClick={() => toggleSection('sportsFitness')}
-    style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
-  >
-    Sports &amp; Fitness
-    <span 
-      className={`glyphicon ${activeSections.sportsFitness ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
-      style={{ float: 'right', marginRight: '5px' }}
-    ></span>
-    <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
-      <a 
-        className="help-document" 
-        href="#" 
-        alt="Help" 
-        title="Help" 
-        onClick={(e) => {
-          e.preventDefault();
-          DisplayHelpDialog('Sports & Fitness', '../TermsPDF/PDFFiles/Sports Fitness.pdf');
-        }}
-      >
-        <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span 
-        className="glyphicon glyphicon-question-sign cursor-help"
-        onMouseEnter={() => handleDownload('Sports Fitness.docx')}
-        title="Download Sports Fitness.docx">
+<div 
+  className="portlet-header1 ui-widget-header2" 
+  onClick={() => toggleSection('sportsFitness')}
+  style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
+>
+  Sports &amp; Fitness
+  <span 
+    className={`glyphicon ${activeSections.sportsFitness ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
+    style={{ float: 'right', marginRight: '5px' }}
+  ></span>
+  <div className="col-sm-3" style={{ float: 'right', width: '45%', marginRight: '15px' }}>
+    <a 
+      className="help-document" 
+      href="#" 
+      alt="Help" 
+      title="Help" 
+      onClick={(e) => {
+        e.preventDefault();
+        DisplayHelpDialog('Sports & Fitness', '../TermsPDF/PDFFiles/Sports Fitness.pdf');
+      }}
+    >
+      <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
+      <span 
+         className="glyphicon glyphicon-question-sign cursor-help"
+         onMouseEnter={() => handleDownload('Sports Fitness.docx')}
+         title="Download Sports Fitness.docx"
+        >
       </span>
-      </a>
-    </div>
+    </a>
   </div>
+</div>
 
   {activeSections.sportsFitness && (
   <ul className="panel-collapse collapse" style={{ marginTop: '10px', height: 'auto', marginLeft: '12px', overflow: 'hidden', display: 'block' }}>
@@ -4248,35 +4451,35 @@ Geography
 </li>
 
 <li className="portlet ui-state-default">
-  <div 
-    className="portlet-header1 ui-widget-header2" 
-    onClick={() => toggleSection('travelHobbies')}
-    style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
-  >
-    Travel &amp; Hobbies
-    <span 
-      className={`glyphicon ${activeSections.travelHobbies ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
-      style={{ float: 'right', marginRight: '5px' }}
-    ></span>
-    <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
-      <a 
-        className="help-document" 
-        href="#" 
-        alt="Help" 
-        title="Help" 
-        onClick={(e) => {
-          e.preventDefault();
-          DisplayHelpDialog('Travel & Hobbies', '../TermsPDF/PDFFiles/Travel Hobbies.pdf');
-        }}
-      >
-        <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
-        <span 
-        className="glyphicon glyphicon-question-sign cursor-help"
-        onMouseEnter={() => handleDownload('Travel Hobbies.docx')}
-        title="Download Travel Hobbies.docx">
-      </span>
-      </a>
-    </div>
+<div  
+    className="portlet-header1 ui-widget-header2"  
+    onClick={() => toggleSection('travelHobbies')} 
+    style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }} 
+  > 
+    Travel &amp; Hobbies 
+    <span  
+      className={`glyphicon ${activeSections.travelHobbies ? 'glyphicon-minus' : 'glyphicon-plus'}`}  
+      style={{ float: 'right', marginRight: '5px' }} 
+    ></span> 
+    <div className="col-sm-3" style={{ float: 'right', width: '45%', marginRight: '15px' }}> 
+      <a  
+        className="help-document"  
+        href="#"  
+        alt="Help"  
+        title="Help"  
+        onClick={(e) => { 
+          e.preventDefault(); 
+          DisplayHelpDialog('Travel & Hobbies', '../TermsPDF/PDFFiles/Travel Hobbies.pdf'); 
+        }} 
+      > 
+        <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span> 
+        <span  
+         className="glyphicon glyphicon-question-sign cursor-help"
+         onMouseEnter={() => handleDownload('Travel Hobbies.docx')}
+         title="Download Travel Hobbies.docx"> 
+      </span> 
+      </a> 
+    </div> 
   </div>
 
   {activeSections.travelHobbies && (
@@ -4346,7 +4549,7 @@ Geography
 
 
 <li className="portlet ui-state-default">
-  <div 
+<div 
     className="portlet-header1 ui-widget-header2" 
     onClick={() => toggleSection('genreBooks')}
     style={{ marginLeft: 'auto', marginRight: 'auto', cursor: 'pointer' }}
@@ -4356,7 +4559,7 @@ Geography
       className={`glyphicon ${activeSections.genreBooks ? 'glyphicon-minus' : 'glyphicon-plus'}`} 
       style={{ float: 'right', marginRight: '5px' }}
     ></span>
-    <div className="col-sm-3" style={{ float: 'right', width: '45%' }}>
+    <div className="col-sm-3" style={{ float: 'right', width: '45%', marginRight: '15px' }}>
       <a 
         className="help-document" 
         href="#" 
@@ -4375,9 +4578,6 @@ Geography
       </span>
       </a>
     </div>
-
-  
-
   </div>
  
   {activeSections.genreBooks && (
@@ -4592,6 +4792,12 @@ const Geography = () => {
   const [activeTab, setActiveTab] = useState('geography');
   const {state,setState}=useContext(ConsumerContext)
   
+  console.log("HEY")
+  console.log(Country.getAllCountries())
+  console.log("STATES")
+  console.log(State.getAllStates())
+  console.log("CITIES")
+  console.log(City.getAllCities())
  
   const [formData, setFormData] = useState({
     zipCodes: '',
@@ -4606,14 +4812,12 @@ const Geography = () => {
     fileStatus: ''
   });
 
-
   const [selectedItems, setSelectedItems] = useState({
     cities: [],
     metros: [],
     counties: []
   });
 
- 
   const [availableItems, setAvailableItems] = useState({
     cities: [],
     metros: [],
@@ -4628,283 +4832,105 @@ const Geography = () => {
     state: true
   });
 
+  // Dynamic data processing
+  const [stateData, setStateData] = useState({});
+  const [usStates, setUsStates] = useState([]);
 
-  const stateData = {
-    'AK': {
-      cities: ['Anchorage', 'Fairbanks', 'Juneau', 'Sitka', 'Ketchikan'],
-      metros: ['Anchorage', 'Fairbanks'],
-      counties: ['Anchorage Municipality', 'Fairbanks North Star Borough', 'Juneau City and Borough', 'Matanuska-Susitna Borough', 'Kenai Peninsula Borough']
-    },
-    'AL': {
-      cities: ['Birmingham', 'Montgomery', 'Mobile', 'Huntsville', 'Tuscaloosa'],
-      metros: ['Birmingham-Hoover', 'Mobile', 'Huntsville', 'Montgomery'],
-      counties: ['Jefferson County', 'Mobile County', 'Madison County', 'Montgomery County', 'Tuscaloosa County']
-    },
-    'AR': {
-      cities: ['Little Rock', 'Fort Smith', 'Fayetteville', 'Springdale', 'Jonesboro'],
-      metros: ['Little Rock-North Little Rock-Conway', 'Fort Smith', 'Fayetteville-Springdale-Rogers'],
-      counties: ['Pulaski County', 'Washington County', 'Sebastian County', 'Benton County', 'Craighead County']
-    },
-    'AZ': {
-      cities: ['Phoenix', 'Tucson', 'Mesa', 'Chandler', 'Scottsdale'],
-      metros: ['Phoenix-Mesa-Chandler', 'Tucson', 'Flagstaff'],
-      counties: ['Maricopa County', 'Pima County', 'Pinal County', 'Yavapai County', 'Mohave County']
-    },
-    'CA': {
-      cities: ['Los Angeles', 'San Francisco', 'San Diego', 'Sacramento', 'Oakland', 'San Jose', 'Fresno', 'Long Beach', 'Santa Ana', 'Anaheim'],
-      metros: ['Los Angeles-Long Beach-Anaheim', 'San Francisco-Oakland-Berkeley', 'San Diego-Chula Vista-Carlsbad', 'Sacramento-Roseville-Folsom', 'San Jose-Sunnyvale-Santa Clara'],
-      counties: ['Los Angeles County', 'San Francisco County', 'San Diego County', 'Orange County', 'Sacramento County', 'Santa Clara County', 'Alameda County', 'Riverside County', 'Fresno County', 'Kern County']
-    },
-    'CO': {
-      cities: ['Denver', 'Colorado Springs', 'Aurora', 'Fort Collins', 'Lakewood'],
-      metros: ['Denver-Aurora-Lakewood', 'Colorado Springs', 'Fort Collins', 'Boulder'],
-      counties: ['Denver County', 'El Paso County', 'Jefferson County', 'Arapahoe County', 'Adams County']
-    },
-    'CT': {
-      cities: ['Bridgeport', 'New Haven', 'Hartford', 'Stamford', 'Waterbury'],
-      metros: ['Hartford-East Hartford-Middletown', 'New Haven-Milford', 'Bridgeport-Stamford-Norwalk'],
-      counties: ['Fairfield County', 'Hartford County', 'New Haven County', 'New London County', 'Litchfield County']
-    },
-    'DC': {
-      cities: ['Washington'],
-      metros: ['Washington-Arlington-Alexandria'],
-      counties: ['District of Columbia']
-    },
-    'DE': {
-      cities: ['Wilmington', 'Dover', 'Newark', 'Middletown', 'Smyrna'],
-      metros: ['Philadelphia-Camden-Wilmington', 'Dover'],
-      counties: ['New Castle County', 'Kent County', 'Sussex County']
-    },
-    'FL': {
-      cities: ['Jacksonville', 'Miami', 'Tampa', 'Orlando', 'St. Petersburg', 'Hialeah', 'Tallahassee', 'Fort Lauderdale', 'Port St. Lucie', 'Cape Coral'],
-      metros: ['Miami-Fort Lauderdale-Pompano Beach', 'Tampa-St. Petersburg-Clearwater', 'Orlando-Kissimmee-Sanford', 'Jacksonville'],
-      counties: ['Miami-Dade County', 'Broward County', 'Palm Beach County', 'Hillsborough County', 'Orange County', 'Pinellas County', 'Duval County', 'Lee County', 'Polk County', 'Brevard County']
-    },
-    'GA': {
-      cities: ['Atlanta', 'Augusta', 'Columbus', 'Macon', 'Savannah'],
-      metros: ['Atlanta-Sandy Springs-Alpharetta', 'Augusta-Richmond County', 'Columbus', 'Savannah'],
-      counties: ['Fulton County', 'Gwinnett County', 'Cobb County', 'DeKalb County', 'Clayton County']
-    },
-    'HI': {
-      cities: ['Honolulu', 'Pearl City', 'Hilo', 'Kailua', 'Waipahu'],
-      metros: ['Urban Honolulu', 'Kahului-Wailuku-Lahaina'],
-      counties: ['Honolulu County', 'Hawaii County', 'Maui County', 'Kauai County']
-    },
-    'IA': {
-      cities: ['Des Moines', 'Cedar Rapids', 'Davenport', 'Sioux City', 'Waterloo'],
-      metros: ['Des Moines-West Des Moines', 'Cedar Rapids', 'Davenport-Moline-Rock Island'],
-      counties: ['Polk County', 'Linn County', 'Scott County', 'Johnson County', 'Black Hawk County']
-    },
-    'ID': {
-      cities: ['Boise', 'Meridian', 'Nampa', 'Idaho Falls', 'Pocatello'],
-      metros: ['Boise City', 'Coeur d\'Alene', 'Idaho Falls', 'Pocatello'],
-      counties: ['Ada County', 'Canyon County', 'Kootenai County', 'Bonneville County', 'Bannock County']
-    },
-    'IL': {
-      cities: ['Chicago', 'Aurora', 'Rockford', 'Joliet', 'Naperville'],
-      metros: ['Chicago-Naperville-Elgin', 'Rockford', 'Peoria', 'Champaign-Urbana'],
-      counties: ['Cook County', 'DuPage County', 'Lake County', 'Kane County', 'Will County']
-    },
-    'IN': {
-      cities: ['Indianapolis', 'Fort Wayne', 'Evansville', 'South Bend', 'Carmel'],
-      metros: ['Indianapolis-Carmel-Anderson', 'Fort Wayne', 'Evansville', 'South Bend-Mishawaka'],
-      counties: ['Marion County', 'Lake County', 'Allen County', 'Hamilton County', 'St. Joseph County']
-    },
-    'KS': {
-      cities: ['Wichita', 'Overland Park', 'Kansas City', 'Topeka', 'Olathe'],
-      metros: ['Wichita', 'Kansas City', 'Topeka', 'Lawrence'],
-      counties: ['Johnson County', 'Sedgwick County', 'Shawnee County', 'Wyandotte County', 'Douglas County']
-    },
-    'KY': {
-      cities: ['Louisville', 'Lexington', 'Bowling Green', 'Owensboro', 'Covington'],
-      metros: ['Louisville/Jefferson County', 'Lexington-Fayette', 'Bowling Green', 'Owensboro'],
-      counties: ['Jefferson County', 'Fayette County', 'Kenton County', 'Boone County', 'Warren County']
-    },
-    'LA': {
-      cities: ['New Orleans', 'Baton Rouge', 'Shreveport', 'Metairie', 'Lafayette'],
-      metros: ['New Orleans-Metairie', 'Baton Rouge', 'Shreveport-Bossier City', 'Lafayette'],
-      counties: ['Orleans Parish', 'Jefferson Parish', 'East Baton Rouge Parish', 'Caddo Parish', 'Lafayette Parish']
-    },
-    'MA': {
-      cities: ['Boston', 'Worcester', 'Springfield', 'Cambridge', 'Lowell'],
-      metros: ['Boston-Cambridge-Newton', 'Worcester', 'Springfield'],
-      counties: ['Middlesex County', 'Worcester County', 'Essex County', 'Norfolk County', 'Plymouth County']
-    },
-    'MD': {
-      cities: ['Baltimore', 'Columbia', 'Germantown', 'Silver Spring', 'Waldorf'],
-      metros: ['Baltimore-Columbia-Towson', 'Washington-Arlington-Alexandria', 'Salisbury'],
-      counties: ['Montgomery County', 'Prince George\'s County', 'Baltimore County', 'Anne Arundel County', 'Howard County']
-    },
-    'ME': {
-      cities: ['Portland', 'Lewiston', 'Bangor', 'South Portland', 'Auburn'],
-      metros: ['Portland-South Portland', 'Lewiston-Auburn', 'Bangor'],
-      counties: ['Cumberland County', 'York County', 'Penobscot County', 'Kennebec County', 'Androscoggin County']
-    },
-    'MI': {
-      cities: ['Detroit', 'Grand Rapids', 'Warren', 'Sterling Heights', 'Lansing'],
-      metros: ['Detroit-Warren-Dearborn', 'Grand Rapids-Wyoming', 'Flint', 'Lansing-East Lansing'],
-      counties: ['Wayne County', 'Oakland County', 'Macomb County', 'Kent County', 'Genesee County']
-    },
-    'MN': {
-      cities: ['Minneapolis', 'Saint Paul', 'Rochester', 'Duluth', 'Bloomington'],
-      metros: ['Minneapolis-St. Paul-Bloomington', 'Duluth', 'Rochester', 'St. Cloud'],
-      counties: ['Hennepin County', 'Ramsey County', 'Dakota County', 'Anoka County', 'Washington County']
-    },
-    'MO': {
-      cities: ['Kansas City', 'St. Louis', 'Springfield', 'Independence', 'Columbia'],
-      metros: ['St. Louis', 'Kansas City', 'Springfield', 'Columbia'],
-      counties: ['St. Louis County', 'Jackson County', 'St. Charles County', 'Jefferson County', 'Clay County']
-    },
-    'MS': {
-      cities: ['Jackson', 'Gulfport', 'Southaven', 'Hattiesburg', 'Biloxi'],
-      metros: ['Jackson', 'Gulfport-Biloxi', 'Hattiesburg'],
-      counties: ['Hinds County', 'Harrison County', 'DeSoto County', 'Jackson County', 'Madison County']
-    },
-    'MT': {
-      cities: ['Billings', 'Missoula', 'Great Falls', 'Bozeman', 'Butte'],
-      metros: ['Billings', 'Missoula', 'Great Falls'],
-      counties: ['Yellowstone County', 'Missoula County', 'Gallatin County', 'Flathead County', 'Cascade County']
-    },
-    'NC': {
-      cities: ['Charlotte', 'Raleigh', 'Greensboro', 'Durham', 'Winston-Salem'],
-      metros: ['Charlotte-Concord-Gastonia', 'Raleigh-Cary', 'Greensboro-High Point', 'Durham-Chapel Hill'],
-      counties: ['Mecklenburg County', 'Wake County', 'Guilford County', 'Forsyth County', 'Cumberland County']
-    },
-    'ND': {
-      cities: ['Fargo', 'Bismarck', 'Grand Forks', 'Minot', 'West Fargo'],
-      metros: ['Fargo', 'Bismarck', 'Grand Forks'],
-      counties: ['Cass County', 'Burleigh County', 'Grand Forks County', 'Ward County', 'Williams County']
-    },
-    'NE': {
-      cities: ['Omaha', 'Lincoln', 'Bellevue', 'Grand Island', 'Kearney'],
-      metros: ['Omaha-Council Bluffs', 'Lincoln', 'Grand Island'],
-      counties: ['Douglas County', 'Lancaster County', 'Sarpy County', 'Hall County', 'Buffalo County']
-    },
-    'NH': {
-      cities: ['Manchester', 'Nashua', 'Concord', 'Derry', 'Rochester'],
-      metros: ['Manchester-Nashua', 'Boston-Cambridge-Newton'],
-      counties: ['Hillsborough County', 'Rockingham County', 'Merrimack County', 'Strafford County', 'Cheshire County']
-    },
-    'NJ': {
-      cities: ['Newark', 'Jersey City', 'Paterson', 'Elizabeth', 'Edison'],
-      metros: ['New York-Newark-Jersey City', 'Philadelphia-Camden-Wilmington', 'Atlantic City-Hammonton'],
-      counties: ['Bergen County', 'Essex County', 'Middlesex County', 'Hudson County', 'Monmouth County']
-    },
-    'NM': {
-      cities: ['Albuquerque', 'Las Cruces', 'Rio Rancho', 'Santa Fe', 'Roswell'],
-      metros: ['Albuquerque', 'Las Cruces', 'Santa Fe'],
-      counties: ['Bernalillo County', 'Dona Ana County', 'Santa Fe County', 'Sandoval County', 'San Juan County']
-    },
-    'NV': {
-      cities: ['Las Vegas', 'Henderson', 'Reno', 'North Las Vegas', 'Sparks'],
-      metros: ['Las Vegas-Henderson-Paradise', 'Reno', 'Carson City'],
-      counties: ['Clark County', 'Washoe County', 'Carson City', 'Lyon County', 'Elko County']
-    },
-    'NY': {
-      cities: ['New York City', 'Buffalo', 'Rochester', 'Yonkers', 'Syracuse', 'Albany', 'New Rochelle', 'Mount Vernon', 'Schenectady', 'Utica'],
-      metros: ['New York-Newark-Jersey City', 'Buffalo-Cheektowaga-Niagara Falls', 'Rochester', 'Albany-Schenectady-Troy', 'Syracuse'],
-      counties: ['New York County', 'Kings County', 'Queens County', 'Bronx County', 'Richmond County', 'Nassau County', 'Suffolk County', 'Westchester County', 'Erie County', 'Monroe County']
-    },
-    'OH': {
-      cities: ['Columbus', 'Cleveland', 'Cincinnati', 'Toledo', 'Akron'],
-      metros: ['Columbus', 'Cleveland-Elyria', 'Cincinnati', 'Dayton', 'Akron'],
-      counties: ['Cuyahoga County', 'Franklin County', 'Hamilton County', 'Montgomery County', 'Summit County']
-    },
-    'OK': {
-      cities: ['Oklahoma City', 'Tulsa', 'Norman', 'Broken Arrow', 'Lawton'],
-      metros: ['Oklahoma City', 'Tulsa', 'Lawton'],
-      counties: ['Oklahoma County', 'Tulsa County', 'Cleveland County', 'Comanche County', 'Canadian County']
-    },
-    'OR': {
-      cities: ['Portland', 'Eugene', 'Salem', 'Gresham', 'Hillsboro'],
-      metros: ['Portland-Vancouver-Hillsboro', 'Eugene-Springfield', 'Salem', 'Medford'],
-      counties: ['Multnomah County', 'Washington County', 'Clackamas County', 'Lane County', 'Marion County']
-    },
-    'PA': {
-      cities: ['Philadelphia', 'Pittsburgh', 'Allentown', 'Erie', 'Reading'],
-      metros: ['Philadelphia-Camden-Wilmington', 'Pittsburgh', 'Allentown-Bethlehem-Easton', 'Reading'],
-      counties: ['Philadelphia County', 'Allegheny County', 'Montgomery County', 'Bucks County', 'Chester County']
-    },
-    'RI': {
-      cities: ['Providence', 'Warwick', 'Cranston', 'Pawtucket', 'East Providence'],
-      metros: ['Providence-Warwick'],
-      counties: ['Providence County', 'Kent County', 'Washington County', 'Bristol County', 'Newport County']
-    },
-    'SC': {
-      cities: ['Columbia', 'Charleston', 'North Charleston', 'Mount Pleasant', 'Rock Hill'],
-      metros: ['Columbia', 'Charleston-North Charleston', 'Greenville-Anderson-Mauldin'],
-      counties: ['Greenville County', 'Richland County', 'Charleston County', 'Lexington County', 'Horry County']
-    },
-    'SD': {
-      cities: ['Sioux Falls', 'Rapid City', 'Aberdeen', 'Brookings', 'Watertown'],
-      metros: ['Sioux Falls', 'Rapid City'],
-      counties: ['Minnehaha County', 'Pennington County', 'Lincoln County', 'Brown County', 'Codington County']
-    },
-    'TN': {
-      cities: ['Nashville', 'Memphis', 'Knoxville', 'Chattanooga', 'Clarksville'],
-      metros: ['Nashville-Davidson-Murfreesboro-Franklin', 'Memphis', 'Knoxville', 'Chattanooga'],
-      counties: ['Davidson County', 'Shelby County', 'Knox County', 'Hamilton County', 'Rutherford County']
-    },
-    'TX': {
-      cities: ['Houston', 'San Antonio', 'Dallas', 'Austin', 'Fort Worth', 'El Paso', 'Arlington', 'Corpus Christi', 'Plano', 'Lubbock'],
-      metros: ['Dallas-Fort Worth-Arlington', 'Houston-The Woodlands-Sugar Land', 'San Antonio-New Braunfels', 'Austin-Round Rock-Georgetown', 'El Paso'],
-      counties: ['Harris County', 'Dallas County', 'Tarrant County', 'Bexar County', 'Travis County', 'Collin County', 'Hidalgo County', 'El Paso County', 'Fort Bend County', 'Montgomery County']
-    },
-    'UT': {
-      cities: ['Salt Lake City', 'West Valley City', 'Provo', 'West Jordan', 'Orem'],
-      metros: ['Salt Lake City', 'Provo-Orem', 'Ogden-Clearfield'],
-      counties: ['Salt Lake County', 'Utah County', 'Davis County', 'Weber County', 'Washington County']
-    },
-    'VA': {
-      cities: ['Virginia Beach', 'Norfolk', 'Chesapeake', 'Richmond', 'Newport News'],
-      metros: ['Virginia Beach-Norfolk-Newport News', 'Richmond', 'Washington-Arlington-Alexandria'],
-      counties: ['Fairfax County', 'Prince William County', 'Virginia Beach city', 'Chesterfield County', 'Henrico County']
-    },
-    'VT': {
-      cities: ['Burlington', 'Essex', 'South Burlington', 'Colchester', 'Rutland'],
-      metros: ['Burlington-South Burlington'],
-      counties: ['Chittenden County', 'Rutland County', 'Washington County', 'Windsor County', 'Franklin County']
-    },
-    'WA': {
-      cities: ['Seattle', 'Spokane', 'Tacoma', 'Vancouver', 'Bellevue'],
-      metros: ['Seattle-Tacoma-Bellevue', 'Spokane-Spokane Valley', 'Kennewick-Richland', 'Olympia-Tumwater'],
-      counties: ['King County', 'Pierce County', 'Snohomish County', 'Spokane County', 'Clark County']
-    },
-    'WI': {
-      cities: ['Milwaukee', 'Madison', 'Green Bay', 'Kenosha', 'Racine'],
-      metros: ['Milwaukee-Waukesha-West Allis', 'Madison', 'Green Bay', 'Racine'],
-      counties: ['Milwaukee County', 'Dane County', 'Waukesha County', 'Brown County', 'Racine County']
-    },
-    'WV': {
-      cities: ['Charleston', 'Huntington', 'Parkersburg', 'Morgantown', 'Wheeling'],
-      metros: ['Charleston', 'Huntington-Ashland', 'Morgantown'],
-      counties: ['Kanawha County', 'Cabell County', 'Wood County', 'Monongalia County', 'Jefferson County']
-    },
-    'WY': {
-      cities: ['Cheyenne', 'Casper', 'Laramie', 'Gillette', 'Rock Springs'],
-      metros: ['Cheyenne', 'Casper'],
-      counties: ['Laramie County', 'Natrona County', 'Campbell County', 'Sweetwater County', 'Fremont County']
-    }
-  };
-  const states = [
-    'AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL',
-    'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA',
-    'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE',
-    'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI',
-    'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY'
-  ];
-
- 
+  // Initialize dynamic data
   useEffect(() => {
+    const initializeData = () => {
+      try {
+        // Get all countries and find US
+        const countries = Country.getAllCountries();
+        const usCountry = countries.find(country => 
+          country.isoCode === 'US' || country.name === 'United States'
+        );
+
+        if (!usCountry) {
+          console.error('US country not found');
+          return;
+        }
+
+        // Get all US states
+        const allStates = State.getAllStates();
+        const usStatesList = allStates.filter(state => 
+          state.countryCode === usCountry.isoCode
+        );
+
+        // Get all cities
+        const allCities = City.getAllCities();
+        const usCities = allCities.filter(city => 
+          city.countryCode === usCountry.isoCode
+        );
+
+        // Build state data structure
+        const stateDataMap = {};
+        
+        usStatesList.forEach(state => {
+          // Get cities for this state
+          const stateCities = usCities
+            .filter(city => city.stateCode === state.isoCode)
+            .map(city => city.name)
+            .sort();
+
+          stateDataMap[state.isoCode] = {
+            name: state.name,
+            cities: stateCities,
+            // For now, keeping metros and counties empty since they're not in the provided data structure
+            // You can add these if you have additional data sources
+            metros: [],
+            counties: []
+          };
+        });
+
+        // Set states list for checkboxes
+        const statesList = usStatesList
+          .map(state => state.isoCode)
+          .sort();
+
+        setStateData(stateDataMap);
+        setUsStates(statesList);
+
+        // Initialize form data with states
+        setFormData(prev => ({
+          ...prev,
+          states: statesList.map(stateCode => ({
+            code: stateCode,
+            name: stateDataMap[stateCode]?.name || stateCode,
+            checked: false
+          }))
+        }));
+
+      } catch (error) {
+        console.error('Error initializing geography data:', error);
+        // Fallback to hardcoded data if dynamic loading fails
+        initializeFallbackData();
+      }
+    };
+
+    initializeData();
+  }, []);
+
+  // Fallback initialization if dynamic data fails
+  const initializeFallbackData = () => {
+    const fallbackStates = [
+      'AK', 'AL', 'AR', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL',
+      'GA', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA',
+      'MD', 'ME', 'MI', 'MN', 'MO', 'MS', 'MT', 'NC', 'ND', 'NE',
+      'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK', 'OR', 'PA', 'RI',
+      'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VT', 'WA', 'WI', 'WV', 'WY'
+    ];
+
+    setUsStates(fallbackStates);
     setFormData(prev => ({
       ...prev,
-      states: states.map(state => ({
+      states: fallbackStates.map(state => ({
         code: state,
+        name: state,
         checked: false
       }))
     }));
-  }, []);
-
+  };
 
   useEffect(() => {
     // Restore form data from context state when component mounts
@@ -4928,31 +4954,35 @@ const Geography = () => {
   
       // Update available items based on selected states
       if (state.states && state.states.length > 0) {
-        const cities = [];
-        const metros = [];
-        const counties = [];
-  
-        state.states.forEach(stateCode => {
-          if (stateData[stateCode]) {
-            cities.push(...stateData[stateCode].cities);
-            metros.push(...stateData[stateCode].metros);
-            counties.push(...stateData[stateCode].counties);
-          }
-        });
-  
-        // Remove already selected cities from available items
-        const availableCities = cities.filter(city => 
-          !state.cities || !state.cities.includes(city)
-        );
-  
-        setAvailableItems({ 
-          cities: availableCities, 
-          metros, 
-          counties 
-        });
+        updateAvailableItemsFromStates(state.states, state.cities || []);
       }
     }
-  }, []);
+  }, [stateData]); // Depend on stateData being loaded
+
+  const updateAvailableItemsFromStates = (selectedStateCodes, excludeCities = []) => {
+    const cities = [];
+    const metros = [];
+    const counties = [];
+
+    selectedStateCodes.forEach(stateCode => {
+      if (stateData[stateCode]) {
+        cities.push(...stateData[stateCode].cities);
+        metros.push(...stateData[stateCode].metros);
+        counties.push(...stateData[stateCode].counties);
+      }
+    });
+
+    // Remove already selected cities from available items
+    const availableCities = cities.filter(city => 
+      !excludeCities.includes(city)
+    );
+
+    setAvailableItems({ 
+      cities: availableCities, 
+      metros, 
+      counties 
+    });
+  };
   
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -4960,18 +4990,19 @@ const Geography = () => {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
-  console.log("STATE GEOGRAPHY")
-  console.log(state)
-  if(name=="zipCodes"){
-    setState((prev)=>{
-      return {
-        ...prev,
-        zip_codes:[value]
-      }
-    })
-  }
+    
+    console.log("STATE GEOGRAPHY")
+    console.log(state)
+    
+    if(name === "zipCodes"){
+      setState((prev) => {
+        return {
+          ...prev,
+          zip_codes: value ? value.split(',').map(zip => zip.trim()).filter(zip => zip) : []
+        }
+      })
+    }
   };
-
 
   const handleStateChange = (stateCode) => {
     setFormData(prev => {
@@ -4985,19 +5016,7 @@ const Geography = () => {
       const selectedStateCodes = updatedStates.filter(s => s.checked).map(s => s.code);
       
       // Update available items immediately with the new selection
-      const cities = [];
-      const metros = [];
-      const counties = [];
-  
-      selectedStateCodes.forEach(state => {
-        if (stateData[state]) {
-          cities.push(...stateData[state].cities);
-          metros.push(...stateData[state].metros);
-          counties.push(...stateData[state].counties);
-        }
-      });
-  
-      setAvailableItems({ cities, metros, counties });
+      updateAvailableItemsFromStates(selectedStateCodes, selectedItems.cities);
       
       return {
         ...prev,
@@ -5018,43 +5037,27 @@ const Geography = () => {
   };
 
   const unselectAllStates = () => {
-  setFormData(prev => ({
-    ...prev,
-    states: prev.states.map(state => ({
-      ...state,
-      checked: false
-    }))
-  }));
+    setFormData(prev => ({
+      ...prev,
+      states: prev.states.map(state => ({
+        ...state,
+        checked: false
+      }))
+    }));
 
-  // Clear the context state
-  setState(prev => ({
-    ...prev,
-    states: []
-  }));
+    // Clear the context state
+    setState(prev => ({
+      ...prev,
+      states: []
+    }));
 
-  // Clear all available items since no states are selected
-  setAvailableItems({ cities: [], metros: [], counties: [] });
-  
-  // Also clear selected items
-  setSelectedItems({ cities: [], metros: [], counties: [] });
-};
-  const updateAvailableItems = (selectedStates) => {
-    const cities = [];
-    const metros = [];
-    const counties = [];
-
-    selectedStates.forEach(state => {
-      if (stateData[state]) {
-        cities.push(...stateData[state].cities);
-        metros.push(...stateData[state].metros);
-        counties.push(...stateData[state].counties);
-      }
-    });
-
-    setAvailableItems({ cities, metros, counties });
+    // Clear all available items since no states are selected
+    setAvailableItems({ cities: [], metros: [], counties: [] });
+    
+    // Also clear selected items
+    setSelectedItems({ cities: [], metros: [], counties: [] });
   };
 
- 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
       ...prev,
@@ -5062,35 +5065,41 @@ const Geography = () => {
     }));
   };
 
- 
   const moveItems = (type, direction, items = []) => {
-    
     if (direction === 'right') {
       setSelectedItems(prev => ({
         ...prev,
         [type]: [...prev[type], ...items]
       }));
-      setState((prev)=>{
-        return {
-          ...state,
-          cities:items
-        }
-      })
+      
+      if (type === 'cities') {
+        setState((prev) => {
+          return {
+            ...prev,
+            cities: [...(prev.cities || []), ...items]
+          }
+        });
+      }
+      
       setAvailableItems(prev => ({
         ...prev,
         [type]: prev[type].filter(item => !items.includes(item))
       }));
-      setState((prev)=>{
-        return {
-          ...prev,
-          cities:prev.cities.filter(u=>u==items[0])
-        }
-      })
     } else {
       setSelectedItems(prev => ({
         ...prev,
         [type]: prev[type].filter(item => !items.includes(item))
       }));
+      
+      if (type === 'cities') {
+        setState((prev) => {
+          return {
+            ...prev,
+            cities: (prev.cities || []).filter(item => !items.includes(item))
+          }
+        });
+      }
+      
       setAvailableItems(prev => ({
         ...prev,
         [type]: [...prev[type], ...items]
@@ -5098,11 +5107,9 @@ const Geography = () => {
     }
   };
 
-  const continuetonext=()=>{
-   
+  const continuetonext = () => {
     setActiveTab("demographics")
   }
-
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -5114,7 +5121,6 @@ const Geography = () => {
     }
   };
 
-
   const resetAll = () => {
     setFormData({
       zipCodes: '',
@@ -5125,25 +5131,26 @@ const Geography = () => {
       countyState: '',
       configName: '',
       selectAllStates: false,
-      states: states.map(state => ({ code: state, checked: false })),
+      states: usStates.map(stateCode => ({ 
+        code: stateCode, 
+        name: stateData[stateCode]?.name || stateCode,
+        checked: false 
+      })),
       fileStatus: ''
     });
     setSelectedItems({ cities: [], metros: [], counties: [] });
     setAvailableItems({ cities: [], metros: [], counties: [] });
   };
 
-
-  
   if (activeTab === 'consumer') {
     return <Consumer/>;
   }
-
 
   if (activeTab === 'demographics') {
     return <Demographics/>;
   }
 
-  if(activeTab==="supression"){
+  if(activeTab === "supression"){
     return <Suppression/>
   }
 
@@ -5181,38 +5188,32 @@ const Geography = () => {
                 Geography
               </button>
 
-              
               <button
                 onClick={() => setActiveTab('demographics')}
                 className={`tab-button ${
-                  activeTab === 'geography'
+                  activeTab === 'demographics'
                     ? 'tab-button-active'
                     : 'tab-button-inactive'
                 }`}
               >
                Demographics
               </button>
-
-          
             </div>
           </div>
         </div>
       </div>
       
       <div className="content-wrapper">
-        {/* Header */}
-       
-
         {/* Main Card */}
         <div className="main-card">
-        <div className="header-container">
-          <div className="header-icon">
-            <MapPin size={24} color="white" />
+          <div className="header-container">
+            <div className="header-icon">
+              <MapPin size={24} color="white" />
+            </div>
+            <h1 className="header-title">Organic Lead List Builder</h1>
+            <p className="header-subtitle">Configure your geographic targeting preferences</p>
           </div>
-          <h1 className="header-title">Organic Lead List Builder</h1>
-          <p className="header-subtitle">Configure your geographic targeting preferences</p>
           
-        </div>
           <div className="card-grid">
             {/* Filter Section */}
             <div className="filter-section">
@@ -5247,60 +5248,6 @@ const Geography = () => {
                         rows="4"
                       />
                     </div>
-                    
-                    {/* <div style={{ marginBottom: '24px' }}>
-                      <label className="input-label">
-                        Zip code radius search
-                      </label>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px' }}>
-                        <input 
-                          type="text" 
-                          className="text-input"
-                          placeholder="Zip Code" 
-                          name="centerZip"
-                          value={formData.centerZip}
-                          onChange={handleInputChange}
-                        />
-                        <input 
-                          type="text" 
-                          className="text-input"
-                          placeholder="Miles" 
-                          name="radiusMiles"
-                          value={formData.radiusMiles}
-                          onChange={handleInputChange}
-                        />
-                        <button 
-                          className="primary-button"
-                          onClick={() => alert('This would normally show a selection dialog')}
-                        >
-                          Look up
-                        </button>
-                      </div>
-                    </div> */}
-
-                    {/* <div>
-                      <label className="input-label">
-                        Upload CSV file with zip codes
-                      </label>
-                      <div 
-                        className="file-upload-container"
-                        onClick={() => document.getElementById('csvFile').click()}
-                      >
-                        <input 
-                          type="file" 
-                          id="csvFile" 
-                          accept=".csv" 
-                          onChange={handleFileUpload}
-                          className="file-input"
-                        />
-                        <FileInput size={32} className="file-upload-icon" />
-                        <p className="file-upload-text">Click to upload CSV file</p>
-                        <small className="file-upload-subtext">Single column of zip codes only</small>
-                      </div>
-                      {formData.fileStatus && (
-                        <div className="file-status">{formData.fileStatus}</div>
-                      )}
-                    </div> */}
                   </div>
                 )}
               </div>
@@ -5332,31 +5279,33 @@ const Geography = () => {
                             onChange={() => handleStateChange(state.code)}
                             className="state-checkbox"
                           />
-                          <span className="state-label">{state.code}</span>
+                          <span className="state-label" title={state.name}>
+                            {state.code}
+                          </span>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
 
-<button 
-      className="reset-button"
-      onClick={unselectAllStates}
-      style={{ 
-        padding: '8px 16px', 
-        fontSize: '14px',
-        backgroundColor: '#ef4444',
-        color: 'white',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        transition: 'background-color 0.2s'
-      }}
-      onMouseOver={(e) => e.target.style.backgroundColor = '#dc2626'}
-      onMouseOut={(e) => e.target.style.backgroundColor = '#ef4444'}
-    >
-      Unselect All States
-    </button>
+                <button 
+                  className="reset-button"
+                  onClick={unselectAllStates}
+                  style={{ 
+                    padding: '8px 16px', 
+                    fontSize: '14px',
+                    backgroundColor: '#ef4444',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => e.target.style.backgroundColor = '#dc2626'}
+                  onMouseOut={(e) => e.target.style.backgroundColor = '#ef4444'}
+                >
+                  Unselect All States
+                </button>
               </div>
 
               {/* City Selection */}
@@ -5455,58 +5404,31 @@ const Geography = () => {
                   <MapPin size={16} /> Geographic Selection
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div className="summary-item">
-  <span className="summary-label">Selected States:</span>
-  <div className="geography-value states-container">
-    {formData.states.filter(s => s.checked).length > 0 ? (
-      formData.states
-        .filter(s => s.checked)
-        .map((val, i, array) => (
-          <span key={i}>
-            <span className="state-tag">{val.code}</span>
-            {i < array.length - 1 ? ', ' : ''}
-          </span>
-        ))
-    ) : (
-      <span className="no-selection">None selected</span>
-    )}
-  </div>
-</div>
+                  <div className="summary-item">
+                    <span className="summary-label">Selected States:</span>
+                    <div className="geography-value states-container">
+                      {formData.states.filter(s => s.checked).length > 0 ? (
+                        formData.states
+                          .filter(s => s.checked)
+                          .map((val, i, array) => (
+                            <span key={i}>
+                              <span className="state-tag" title={val.name}>
+                                {val.code}
+                              </span>
+                              {i < array.length - 1 ? ', ' : ''}
+                            </span>
+                          ))
+                      ) : (
+                        <span className="no-selection">None selected</span>
+                      )}
+                    </div>
+                  </div>
                   <div className="summary-item">
                     <span className="summary-label">Selected Cities:</span> 
                     <span className="geography-value">{selectedItems.cities.length}</span>
                   </div>
                 </div>
               </div>
-
-              {/* <div className="save-card">
-                <div className="save-header">
-                  <Save size={16} /> Save Configuration
-                </div>
-                <input 
-                  type="text" 
-                  className="save-input"
-                  placeholder="Configuration name..." 
-                  name="configName"
-                  value={formData.configName}
-                  onChange={handleInputChange}
-                />
-                <button 
-                  className="save-button"
-                  onClick={() => alert('Configuration saved!')}
-                >
-                  Save
-                </button>
-              </div> */}
-
-              {/* <div style={{ textAlign: 'center' }}>
-                <button 
-                  className="reset-button"
-                  onClick={resetAll}
-                >
-                  <RefreshCw size={16} /> Reset All
-                </button>
-              </div> */}
             </div>
           </div>
         </div>
@@ -5514,7 +5436,6 @@ const Geography = () => {
     </div>
   );
 };
-
 
 const Consumer = () => {
   const [activeTab, setActiveTab] = useState('consumer');
@@ -5856,66 +5777,67 @@ console.log(state)
 
                 {/* Dedup Options */}
                 {showDedupOptions && (
-                  <div className="filter-card">
-                    <div className="filter-content">
-                      <h3 className="campaign-subtitle" style={{ marginBottom: '16px' }}>Dedup Option:</h3>
-                      
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                        <div className="radio-option">
-                          <input
-                            type="radio"
-                            id="onePerIndividual"
-                            name="dedupOption"
-                            value="One Per Individual"
-                            checked={formData.dedupOption === 'One Per Individual'}
-                            onChange={(e) => handleDedupChange(e.target.value)}
-                            className="radio-input"
-                          />
-                          <label htmlFor="onePerIndividual" className="radio-label">One Per Individual</label>
-                        </div>
+  <div className="filter-card">
+    <div className="filter-content">
+      <div style={{ position: 'relative', display: 'inline-block' }}>
+        <h3 
+          className="campaign-subtitle tooltip-trigger" 
+          style={{ marginBottom: '16px', gap:"3px",cursor: 'help',display:"flex",flexDirection:'row',justifyContent:'center',alignContent:'center',textAlign:'center',alignItems:"center"}}
+        >
+         <div style={{display:'flex',justifyContent:'center',alignItems:'center',alignContent:"center"}}>
+          <svg width={"15"} height={"15"} xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" viewBox="0 0 512 512"><path fill-rule="nonzero" d="M256 0c70.69 0 134.7 28.66 181.02 74.98C483.34 121.31 512 185.31 512 256c0 70.69-28.66 134.7-74.98 181.02C390.7 483.34 326.69 512 256 512c-70.69 0-134.69-28.66-181.02-74.98C28.66 390.7 0 326.69 0 256c0-70.69 28.66-134.69 74.98-181.02C121.31 28.66 185.31 0 256 0zm-21.49 301.51v-2.03c.16-13.46 1.48-24.12 4.07-32.05 2.54-7.92 6.19-14.37 10.97-19.25 4.77-4.92 10.51-9.39 17.22-13.46 4.31-2.74 8.22-5.78 11.68-9.18 3.45-3.36 6.19-7.27 8.23-11.69 2.02-4.37 3.04-9.24 3.04-14.62 0-6.4-1.52-11.94-4.57-16.66-3-4.68-7.06-8.28-12.04-10.87-5.03-2.54-10.61-3.81-16.76-3.81-5.53 0-10.81 1.11-15.89 3.45-5.03 2.29-9.25 5.89-12.55 10.77-3.3 4.87-5.23 11.12-5.74 18.74h-32.91c.51-12.95 3.81-23.92 9.85-32.91 6.1-8.99 14.13-15.8 24.08-20.42 10.01-4.62 21.08-6.9 33.16-6.9 13.31 0 24.89 2.43 34.84 7.41 9.96 4.93 17.73 11.83 23.27 20.67 5.48 8.84 8.28 19.1 8.28 30.88 0 8.08-1.27 15.34-3.81 21.79-2.54 6.45-6.1 12.24-10.77 17.27-4.68 5.08-10.21 9.54-16.71 13.41-6.15 3.86-11.12 7.82-14.88 11.93-3.81 4.11-6.56 8.99-8.28 14.58-1.73 5.63-2.69 12.59-2.84 20.92v2.03h-30.94zm16.36 65.82c-5.94-.04-11.02-2.13-15.29-6.35-4.26-4.21-6.35-9.34-6.35-15.33 0-5.89 2.09-10.97 6.35-15.19 4.27-4.21 9.35-6.35 15.29-6.35 5.84 0 10.92 2.14 15.18 6.35 4.32 4.22 6.45 9.3 6.45 15.19 0 3.96-1.01 7.62-2.99 10.87-1.98 3.3-4.57 5.94-7.82 7.87-3.25 1.93-6.86 2.9-10.82 2.94zM417.71 94.29C376.33 52.92 319.15 27.32 256 27.32c-63.15 0-120.32 25.6-161.71 66.97C52.92 135.68 27.32 192.85 27.32 256c0 63.15 25.6 120.33 66.97 161.71 41.39 41.37 98.56 66.97 161.71 66.97 63.15 0 120.33-25.6 161.71-66.97 41.37-41.38 66.97-98.56 66.97-161.71 0-63.15-25.6-120.32-66.97-161.71z"/></svg>
+          </div>
+          Dedup Option:
+          
+          <span className="tooltip">
+            This feature removes duplicate records from your data set to ensure each contact appears only once, improving accuracy and reducing redundancy.
+          </span>
+        </h3>
+      </div>
+      
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div className="radio-option">
+          <input
+            type="radio"
+            id="onePerIndividual"
+            name="dedupOption"
+            value="One Per Individual"
+            checked={formData.dedupOption === 'One Per Individual'}
+            onChange={(e) => handleDedupChange(e.target.value)}
+            className="radio-input"
+          />
+          <label htmlFor="onePerIndividual" className="radio-label">One Per Individual</label>
+        </div>
 
-                        <div className="radio-option">
-                          <input
-                            type="radio"
-                            id="onePerHH"
-                            name="dedupOption"
-                            value="One Per Household"
-                            checked={formData.dedupOption === 'One Per Household'}
-                            onChange={(e) => handleDedupChange(e.target.value)}
-                            className="radio-input"
-                          />
-                          <label htmlFor="onePerHH" className="radio-label">One Per Household</label>
-                        </div>
+        <div className="radio-option">
+          <input
+            type="radio"
+            id="onePerHH"
+            name="dedupOption"
+            value="One Per Household"
+            checked={formData.dedupOption === 'One Per Household'}
+            onChange={(e) => handleDedupChange(e.target.value)}
+            className="radio-input"
+          />
+          <label htmlFor="onePerHH" className="radio-label">One Per Household</label>
+        </div>
 
-                        <div className="radio-option">
-                          <input
-                            type="radio"
-                            id="onePerHH"
-                            name="dedupOption"
-                            value="This feature removes duplicate records from your data set to ensure each contact appears only once, improving accuracy and reducing redundancy."
-                            checked={formData.dedupOption === 'This feature removes duplicate records from your data set to ensure each contact appears only once, improving accuracy and reducing redundancy.'}
-                            onChange={(e) => handleDedupChange(e.target.value)}
-                            className="radio-input"
-                          />
-                          <label htmlFor="onePerHH" className="radio-label">This feature removes duplicate records from your data set to ensure each contact appears only once, improving accuracy and reducing redundancy.</label>
-                        </div>
-
-                        <div className="radio-option">
-                          <input
-                            type="radio"
-                            id="allPerHH"
-                            name="dedupOption"
-                            value="All Per Household"
-                            checked={formData.dedupOption === 'All Per Household'}
-                            onChange={(e) => handleDedupChange(e.target.value)}
-                            className="radio-input"
-                          />
-                          <label htmlFor="allPerHH" className="radio-label">All Per Household</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+        <div className="radio-option">
+          <input
+            type="radio"
+            id="allPerHH"
+            name="dedupOption"
+            value="All Per Household"
+            checked={formData.dedupOption === 'All Per Household'}
+            onChange={(e) => handleDedupChange(e.target.value)}
+            className="radio-input"
+          />
+          <label htmlFor="allPerHH" className="radio-label">All Per Household</label>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
               </div>
             </div>
 
