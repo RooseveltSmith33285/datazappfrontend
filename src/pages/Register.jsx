@@ -149,7 +149,7 @@ const RegistrationPage = () => {
             </p>
 
             {/* Database Statistics */}
-            <div className={styles.databaseStats}>
+            <div style={{color:'white'}} className={styles.databaseStats}>
               <div className={styles.statsHeader}>
                 <Database className={styles.databaseIcon} />
                 <h3>National Consumer Database</h3>

@@ -3179,7 +3179,7 @@ Geography
       <span className="relative inline-block">
         <span 
           className="glyphicon glyphicon-question-sign cursor-help"
-          onMouseEnter={()=>handleDownload("Household Data.docx")}
+          onClick={()=>handleDownload("Household Data.docx")}
           title="Download Household Data.docx"
         ></span>
       </span>
@@ -3412,7 +3412,7 @@ Geography
       <span className="relative inline-block">
         <span 
           className="glyphicon glyphicon-question-sign cursor-help"
-          onMouseEnter={() => handleDownload('Individuals.docx')}
+          onClick={() => handleDownload('Individuals.docx')}
           title="Download Individuals.docx"
         ></span>
       </span>
@@ -3844,7 +3844,7 @@ Geography
      
     <span 
       className="glyphicon glyphicon-question-sign cursor-help"
-      onMouseEnter={() => handleDownload('Donor Affinity Data Dictionary.docx')}
+      onClick={() => handleDownload('Donor Affinity Data Dictionary.docx')}
       title="Download Donor Affinity Data Dictionary.docx">
     </span>
     </a>
@@ -4002,7 +4002,7 @@ Geography
       <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
       <span 
         className="glyphicon glyphicon-question-sign cursor-help"
-        onMouseEnter={() => handleDownload('Turning 65 Data.docx')}
+        onClick={() => handleDownload('Turning 65 Data.docx')}
         title="Download Turning 65 Data.docx">
       </span>
     </a>
@@ -4089,7 +4089,7 @@ Geography
       <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
       <span 
         className="glyphicon glyphicon-question-sign cursor-help"
-        onMouseEnter={() => handleDownload('Pets.docx')}
+        onClick={() => handleDownload('Pets.docx')}
         title="Download Pets.docx">
       </span>
     </a>
@@ -4180,7 +4180,7 @@ Geography
       <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
       <span 
         className="glyphicon glyphicon-question-sign cursor-help"
-        onMouseEnter={() => handleDownload('Propensity.docx')}
+        onClick={() => handleDownload('Propensity.docx')}
         title="Download Propensity.docx">
       </span>
     </a>
@@ -4284,7 +4284,7 @@ Geography
      
       <span 
         className="glyphicon glyphicon-question-sign cursor-help"
-        onMouseEnter={() => handleDownload('Outdoor.docx')}
+        onClick={() => handleDownload('Outdoor.docx')}
         title="Download Outdoor.docx">
       </span>
     </a>
@@ -4379,7 +4379,7 @@ Geography
       <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
       <span 
          className="glyphicon glyphicon-question-sign cursor-help"
-         onMouseEnter={() => handleDownload('Sports Fitness.docx')}
+         onClick={() => handleDownload('Sports Fitness.docx')}
          title="Download Sports Fitness.docx"
         >
       </span>
@@ -4475,7 +4475,7 @@ Geography
         <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span> 
         <span  
          className="glyphicon glyphicon-question-sign cursor-help"
-         onMouseEnter={() => handleDownload('Travel Hobbies.docx')}
+         onClick={() => handleDownload('Travel Hobbies.docx')}
          title="Download Travel Hobbies.docx"> 
       </span> 
       </a> 
@@ -4573,7 +4573,7 @@ Geography
         <span style={{ fontSize: 'x-small', verticalAlign: 'text-bottom' }}>View Data Dictionary</span>
         <span 
         className="glyphicon glyphicon-question-sign cursor-help"
-        onMouseEnter={() => handleDownload('Genre Books Magazines Web TV.docx')}
+        onClick={() => handleDownload('Genre Books Magazines Web TV.docx')}
         title="Download Genre Books Magazines Web TV.docx">
       </span>
       </a>
