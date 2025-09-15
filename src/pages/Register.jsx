@@ -104,15 +104,7 @@ const RegistrationPage = () => {
       setTimeout(() => {
         setIsSubmitting(false);
         alert('Registration successful! Welcome to Enrichify.');
-        setFormData({
-          name: '',
-          email: '',
-          password: '',
-          confirmPassword: '',
-          address: '',
-          phone: '',
-          agreeToTerms: false
-        });
+      
       }, 2000);
       localStorage.setItem("user",JSON.stringify(response.data.user))
       navigate('/consumer')
