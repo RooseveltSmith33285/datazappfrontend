@@ -12,9 +12,9 @@ const RegistrationPage = () => {
     confirmPassword: '',
     address: '',
     phone: '',
+    sale_rep: '', // New field for sales representative
     agreeToTerms: false
   });
-  
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -22,7 +22,17 @@ const RegistrationPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+
+  // Sales representatives array
+  const salesRepresentatives = [
+    'Joe Acquafredda',
+    'Andrew Johnson',
+    'Roosevelt Smith',
+    'Kyle Black',
+    'Kyle Peachey'
+  ];
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
@@ -84,6 +94,7 @@ const RegistrationPage = () => {
     } else if (!/^\+?[\d\s\-\(\)]+$/.test(formData.phone)) {
       newErrors.phone = 'Please enter a valid phone number';
     }
+    if (!formData.sale_rep) newErrors.sale_rep = 'Please select a sales representative'; // New validation
     if (!formData.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
     
     return newErrors;
@@ -104,10 +115,10 @@ const RegistrationPage = () => {
       setTimeout(() => {
         setIsSubmitting(false);
         alert('Registration successful! Welcome to Enrichify.');
-      
       }, 2000);
-      localStorage.setItem("user",JSON.stringify(response.data.user))
-      navigate('/consumer')
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      localStorage.setItem("firstTime", true);
+      navigate('/consumer');
     } catch(e) {
       setIsSubmitting(false);
       if(e?.response?.data?.error) {
@@ -132,7 +143,6 @@ const RegistrationPage = () => {
       <div className={styles.card}>
         {/* Left Side - Branding */}
         <div className={styles.branding}>
-          
           <div className={styles.circleTop}></div>
           <div className={styles.circleBottom}></div>
           
@@ -191,9 +201,7 @@ const RegistrationPage = () => {
         <div className={styles.formSection}>
           <div className={styles.formContainer}>
             <div className={styles.mobileLogo}>
-            <img style={{width:'70%'}} src="https://www.enrichifydata.com/wp-content/uploads/2024/11/WhatsApp_Image_2024-11-24_at_8.44.26_PM-removebg-preview.png" alt="Enrichify Logo" />
-            
-        
+              <img style={{width:'70%'}} src="https://www.enrichifydata.com/wp-content/uploads/2024/11/WhatsApp_Image_2024-11-24_at_8.44.26_PM-removebg-preview.png" alt="Enrichify Logo" />
             </div>
             
             <div className={styles.formHeader}>
@@ -258,6 +266,25 @@ const RegistrationPage = () => {
                   placeholder="123 Main Street, City, State, ZIP Code"
                 />
                 {errors.address && <p className={styles.error}>{errors.address}</p>}
+              </div>
+
+              {/* Sales Representative Dropdown */}
+              <div className={styles.formGroup}>
+                <label>Sales Representative</label>
+                <select
+                  name="sale_rep"
+                  value={formData.sale_rep}
+                  onChange={handleChange}
+                  className={styles.selectInput}
+                >
+                  <option value="">Select a sales representative</option>
+                  {salesRepresentatives.map((rep) => (
+                    <option key={rep} value={rep}>
+                      {rep}
+                    </option>
+                  ))}
+                </select>
+                {errors.sale_rep && <p className={styles.error}>{errors.sale_rep}</p>}
               </div>
 
               {/* Password */}

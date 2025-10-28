@@ -37,7 +37,15 @@ const ConsumerContextProvider = ({ children }) => {
         genre_range: [],
         genre_op: 'AND',
         save_name: '',
-        supression_option:''
+        supression_option:'',
+        state:'',
+        industry_category:'',
+        specific_industry:'',
+        monthly_lead_volume:'',
+        membership_tier:'',
+        total_purchase_leads:'',
+        plan:'',
+        plan_price:''
     });
 
     return (

@@ -9,11 +9,12 @@ import { ConsumerContext } from '../context/ConsumerContextAPI';
 
 
 import { 
-  Database, Shield, Zap, Globe, Play, HelpCircle, X, MapPin, 
+  Database, Shield, Zap, Globe, Play,AlertCircle, HelpCircle, X, MapPin, 
   ChevronDown, ChevronRight, Mail, Phone, Save, RefreshCw, 
   ArrowRight, ArrowLeft, FileInput, Upload, Plus, Check
 } from 'lucide-react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Suppression = () => {
   const {state,setState}=useContext(ConsumerContext)
@@ -659,6 +660,9 @@ const Demographics = () => {
     { value: 'Dogs', label: 'Dogs' },
     { value: 'Pets', label: 'Pets' }
   ];
+
+  
+ const navigate=useNavigate();
   const [availablePetCategoryOptions, setAvailablePetCategoryOptions] = useState(allPetCategoryOptions);
   const [selectedPetCategoryOptions, setSelectedPetCategoryOptions] = useState([]);
   const [leftPetCategoryHighlighted, setLeftPetCategoryHighlighted] = useState([]);
@@ -724,6 +728,77 @@ const Demographics = () => {
   const {state,setState}=useContext(ConsumerContext)
 
 const [genreBooksLogicOperator, setGenreBooksLogicOperator] = useState('OR');
+
+
+
+  const handleCustomInputFocus = () => {
+    setIsCustomInput(true);
+  };
+
+ 
+
+  const [selectedLeads, setSelectedLeads] = useState(25);
+  const [isCustomInput, setIsCustomInput] = useState(false);
+  const [customLeads, setCustomLeads] = useState('');
+  const [leadSelections, setLeadSelections] = useState({
+    25: false, 30: false, 35: false, 40: false, 45: false, 50: false,
+    55: false, 60: false, 65: false, 70: false, 75: false, 80: false,
+    85: false, 90: false, 95: false, 100: false
+  });
+
+  const leadOptions = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100];
+
+  const handleLeadSelect = (leads) => {
+    // For single selection behavior, uncheck all others
+    const newSelections = {};
+    leadOptions.forEach(option => {
+      newSelections[option] = option === leads;
+    });
+    console.log("LEADS")
+    console.log(leads)
+ setState({
+  ...state,
+  total_purchase_leads:leads?.toString()
+ })
+    setLeadSelections(newSelections);
+    setSelectedLeads(leads);
+    setIsCustomInput(false);
+    setCustomLeads('');
+  };
+
+  const handleSelectAllLeads = () => {
+    const allSelected = !Object.values(leadSelections).some(val => val);
+    const newSelections = {};
+    leadOptions.forEach(option => {
+      newSelections[option] = allSelected;
+    });
+    setLeadSelections(newSelections);
+    if (allSelected) {
+      setSelectedLeads(100); // Set to max value when selecting all
+    }
+  };
+
+  const handleCustomInputChange = (e) => {
+    const value = e.target.value;
+    setCustomLeads(value);
+    if (value && !isNaN(value)) {
+      setSelectedLeads(parseInt(value));
+      setIsCustomInput(true);
+      // Uncheck all predefined options when using custom input
+      const newSelections = {};
+      leadOptions.forEach(option => {
+        newSelections[option] = false;
+      });
+      setLeadSelections(newSelections);
+    }
+  };
+
+  const calculatePrice = (leads) => {
+    const basePrice = leads * 10;
+    return basePrice.toFixed(2);
+  };
+
+  const allLeadsSelected = Object.values(leadSelections).every(val => val);
 
 
 const handleGenreBooksSelectionChange = (e) => {
@@ -3259,6 +3334,7 @@ Geography
                     </div>
                   </li>
 
+      
                   <li>
                     <div className="panel panel-default col-md-7" style={{ padding: '0' }}>
                       <div className="panel-heading panelheading-title">Home Owner</div>
@@ -4645,7 +4721,7 @@ Geography
 <div className="row">
     <button 
     onClick={()=>{
-      setActiveTab('supression')
+      navigate('/lead')
     }}
                 className="primary-button" 
                
@@ -5440,6 +5516,8 @@ const Geography = () => {
 const Consumer = () => {
   const [activeTab, setActiveTab] = useState('consumer');
   const {state,setState}=useContext(ConsumerContext)
+  const [isVisible, setIsVisible] = useState(false);
+
   const [formData, setFormData] = useState({
     campaignType: '',
     dedupOption: '', 
@@ -5523,6 +5601,10 @@ console.log(state)
     }));
   }, [state.campaign_type, state.dedup_option, state.phone_options]);
 
+  useEffect(()=>{
+getFirst();
+  },[])
+
   const handleContinue = () => {
  
     setActiveTab('geography');
@@ -5545,8 +5627,301 @@ console.log(state)
 
 
 
+ 
+  const getFirst=()=>{
+    let firstTime=localStorage.getItem('firstTime')
+    console.log(typeof firstTime)
+    console.log(firstTime)
+if(firstTime=='true'){
+  setIsVisible(true)
+}
+  }
   return (
     <div className="campaign-builder">
+      <style>{`
+        .popup-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: rgba(0, 0, 0, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 16px;
+          z-index: 50;
+        }
+
+        .popup-container {
+          background-color: white;
+          border-radius: 8px;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+          max-width: 500px;
+          width: 100%;
+          overflow: hidden;
+          animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+
+        .popup-header {
+          background: linear-gradient(to right, #2563eb, #1d4ed8);
+          padding: 16px 24px;
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 12px;
+        }
+
+        .popup-header-content {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          flex: 1;
+        }
+
+        .popup-header-icon {
+          width: 24px;
+          height: 24px;
+          color: white;
+          flex-shrink: 0;
+          margin-top: 4px;
+        }
+
+        .popup-header h2 {
+          font-size: 20px;
+          font-weight: bold;
+          color: white;
+          margin: 0;
+        }
+
+        .popup-close-btn {
+          background: none;
+          border: none;
+          color: white;
+          cursor: pointer;
+          padding: 0;
+          flex-shrink: 0;
+          margin-left: 8px;
+          transition: color 0.2s;
+        }
+
+        .popup-close-btn:hover {
+          color: #dbeafe;
+        }
+
+        .popup-close-icon {
+          width: 24px;
+          height: 24px;
+        }
+
+        .popup-content {
+          padding: 20px 24px;
+          space-y: 16px;
+        }
+
+        .fee-box {
+          background-color: #eff6ff;
+          border-left: 4px solid #2563eb;
+          padding: 16px;
+          border-radius: 4px;
+          margin-bottom: 16px;
+        }
+
+        .fee-box p:first-child {
+          font-size: 24px;
+          font-weight: bold;
+          color: #1e3a8a;
+          margin: 0;
+        }
+
+        .fee-box p:last-child {
+          font-size: 12px;
+          color: #1e40af;
+          margin: 4px 0 0 0;
+        }
+
+        .popup-content h3 {
+          font-weight: 600;
+          color: #1f2937;
+          margin: 12px 0 12px 0;
+          font-size: 14px;
+        }
+
+        .popup-content ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .popup-content li {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          font-size: 14px;
+          color: #374151;
+        }
+
+        .popup-content li span:first-child {
+          color: #2563eb;
+          font-weight: bold;
+          margin-top: 4px;
+        }
+
+        .credit-box {
+          background-color: #f0fdf4;
+          border: 1px solid #bbf7d0;
+          padding: 16px;
+          border-radius: 8px;
+          margin-bottom: 16px;
+        }
+
+        .credit-box p:first-of-type {
+          font-size: 12px;
+          font-weight: 600;
+          color: #166534;
+          margin: 0 0 4px 0;
+        }
+
+        .credit-box p:nth-of-type(2) {
+          font-size: 18px;
+          font-weight: bold;
+          color: #15803d;
+          margin: 0;
+        }
+
+        .credit-box p:last-child {
+          font-size: 12px;
+          color: #15803d;
+          margin: 8px 0 0 0;
+        }
+
+        .popup-footer {
+          background-color: #f9fafb;
+          padding: 16px 24px;
+          display: flex;
+          gap: 12px;
+        }
+
+        .popup-btn {
+          flex: 1;
+          padding: 8px 16px;
+          border: none;
+          border-radius: 8px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-size: 14px;
+        }
+
+        .popup-btn-cancel {
+          background-color: white;
+          border: 1px solid #d1d5db;
+          color: #374151;
+        }
+
+        .popup-btn-cancel:hover {
+          background-color: #f3f4f6;
+        }
+
+        .popup-btn-proceed {
+          background-color: #2563eb;
+          color: white;
+        }
+
+        .popup-btn-proceed:hover {
+          background-color: #1d4ed8;
+        }
+      `}</style>
+
+    {isVisible?  <div className="popup-overlay">
+        <div className="popup-container">
+          {/* Header */}
+          <div className="popup-header">
+            <div className="popup-header-content">
+              <AlertCircle className="popup-header-icon" />
+              <h2>First-Time User Fee</h2>
+            </div>
+            <button
+              onClick={() => setIsVisible(false)}
+              className="popup-close-btn"
+              aria-label="Close popup"
+            >
+              <X className="popup-close-icon" />
+            </button>
+          </div>
+
+          {/* Content */}
+          <div className="popup-content">
+            <div className="fee-box">
+              <p>$99</p>
+              <p>One-time onboarding fee</p>
+            </div>
+
+            <div>
+              <h3>What's Included:</h3>
+              <ul>
+                <li>
+                  <span>✓</span>
+                  <span>Account setup and configuration</span>
+                </li>
+                <li>
+                  <span>✓</span>
+                  <span>Data verification and validation</span>
+                </li>
+                <li>
+                  <span>✓</span>
+                  <span>Secure API provisioning</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="credit-box">
+              <p>Bonus Credit Included</p>
+              <p>$25 Credit</p>
+              <p>
+                Automatically credited to your account upon verification. Use toward any future data request or enrichment service.
+              </p>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="popup-footer">
+            <button
+              onClick={() => {setIsVisible(false)
+                localStorage.removeItem('firstTime')
+
+              }}
+              className="popup-btn popup-btn-cancel"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                setIsVisible(false)
+
+                localStorage.removeItem('firstTime')
+              }}
+              className="popup-btn popup-btn-proceed"
+            >
+              Proceed with $99 Fee
+            </button>
+          </div>
+        </div>
+      </div>:''}
       {/* Background Pattern */}
       <div className="background-pattern">
         <div className="background-gradient" />

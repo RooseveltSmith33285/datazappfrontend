@@ -4,6 +4,7 @@ import { BrowserRouter,Route,Routes } from 'react-router-dom';
 import Register from './pages/Register';
 import LoginPage from './pages/Login';
 import Consumer from './pages/Consumer';
+import Suppression from './pages/FinalPage'
 import ConsumerContextProvider from './context/ConsumerContextAPI';
 import Authmiddleware from './middleware/authmiddleware';
 import Forgetpassword from './pages/Forgetpassword';
@@ -13,20 +14,41 @@ import AdminLogin from './pages/AdminLogin';
 import AdminRegister from './pages/AdminRegister';
 import AdminReset from './pages/AdminReset';
 import AdminAuthmiddleware from './middleware/adminmiddleware';
+import LeadPricingCalculator from './pages/priceCalculator';
 function App() {
   return (
     <BrowserRouter>
     <Routes>
+  
       <Route path='/' element={<Register/>} />
       <Route path='/login' element={<LoginPage/>} />
       <Route path='/resetpassword' element={<Resetpassword/>}/>
       <Route path='/forgetpassword' element={<Forgetpassword/>}/>
       <Route path='/consumer' element={<ConsumerContextProvider>
-    
+   
        <Authmiddleware>
        <Consumer/>
        </Authmiddleware>
       </ConsumerContextProvider>}></Route>
+
+      <Route path='/lead' element={<ConsumerContextProvider>
+   
+   <Authmiddleware>
+   <LeadPricingCalculator/>
+   </Authmiddleware>
+  </ConsumerContextProvider>}></Route>
+     
+
+
+
+  <Route path='/supression' element={<ConsumerContextProvider>
+   
+   <Authmiddleware>
+   <Suppression/>
+   </Authmiddleware>
+  </ConsumerContextProvider>}></Route>
+
+
       <Route path='/dashboard' element={<AdminAuthmiddleware>
         <AdminDashboard/>
       </AdminAuthmiddleware>}/>

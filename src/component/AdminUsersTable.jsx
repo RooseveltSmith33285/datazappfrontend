@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Eye, Edit, ChevronLeft, ChevronRight } from 'lucide-react';
-
-const AdminUsersTable = ({ users, setSelectedUser, setEditUser }) => {
+import { Eye, Edit,Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import axios from 'axios';
+const AdminUsersTable = ({ setUsers,users, setSelectedUser, setEditUser }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
 
@@ -9,7 +9,7 @@ const AdminUsersTable = ({ users, setSelectedUser, setEditUser }) => {
   const totalPages = Math.ceil(users.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentUsers = users.slice(startIndex, endIndex);
+  let currentUsers = users.slice(startIndex, endIndex);
 
   // Pagination handlers
   const goToPage = (page) => {
@@ -53,6 +53,26 @@ const AdminUsersTable = ({ users, setSelectedUser, setEditUser }) => {
     return pages;
   };
 
+
+  const deleteRequest = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this user?')) {
+      return;
+    }
+
+    try {
+   
+      let response = await axios.delete(`https://datazapptoolbackend.vercel.app/deleteUser/${id}`);
+      
+     
+     
+      setUsers((prev) => prev.filter((u) => u?._id !== id));
+
+      alert("User deleted successfully");
+    } catch (e) {
+      alert("Failed to delete user");
+    }
+  };
+
   return (
     <div>
       <div className="table-container">
@@ -87,6 +107,14 @@ const AdminUsersTable = ({ users, setSelectedUser, setEditUser }) => {
                         title="Edit"
                       >
                         <Edit size={18} />
+                      </button>
+
+                      <button 
+                       onClick={()=>deleteRequest(user._id)}
+                        className="action-btn action-delete" 
+                        title="Delete"
+                      >
+                        <Trash2 size={18} />
                       </button>
                     </div>
                   </td>

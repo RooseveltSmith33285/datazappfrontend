@@ -236,7 +236,7 @@ let response=await axios.get(`https://datazapptoolbackend.vercel.app/getUsers`)
 
 setUsers(response.data.users)
     }catch(e){
-
+console.log(e.message)
     }
 }
 
@@ -265,6 +265,7 @@ setUsers(response.data.users)
                   users={filteredUsers} 
                   setSelectedUser={setSelectedUser}
                   setEditUser={setEditUser}
+                  setUsers={setUsers}
                 />
               ) : (
                 <RequestsTable 
