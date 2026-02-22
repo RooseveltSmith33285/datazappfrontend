@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { BASE_URL } from '../baseurl';
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
@@ -24,7 +25,7 @@ const AdminLogin = () => {
     setError('');
 
     try {
-      const response = await fetch('https://datazapptoolbackend.vercel.app/admin/login', {
+      const response = await fetch(`${BASE_URL}/admin/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

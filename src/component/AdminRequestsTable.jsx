@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from 'axios';
+import { BASE_URL } from '../baseurl';
 
 const AdminRequestsTable = ({ requests, setRequests, setSelectedRequest }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,7 +78,7 @@ const AdminRequestsTable = ({ requests, setRequests, setSelectedRequest }) => {
     }
 
     try {
-      let response = await axios.delete(`https://datazapptoolbackend.vercel.app/deleteRequest/${id}`);
+      let response = await axios.delete(`${BASE_URL}/deleteRequest/${id}`);
       setRequests((prev) => {
         let old;
         if (prev.length > 0) {

@@ -3,6 +3,7 @@ import { Eye, EyeOff, Database, Shield, Zap, Globe } from 'lucide-react';
 import styles from './LoginPage.module.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../baseurl';
 
 const LoginPage = () => {
   const [formData, setFormData] = useState({
@@ -51,7 +52,7 @@ const LoginPage = () => {
     }
     
    try{
-let response=await axios.post(`https://datazapptoolbackend.vercel.app/login`,formData)
+let response=await axios.post(`${BASE_URL}/login`,formData)
 localStorage.setItem('user',JSON.stringify(response.data.user))
 navigate('/consumer')
 setIsSubmitting(true);
@@ -60,6 +61,7 @@ setTimeout(() => {
   alert('Login successful! Welcome back to Enrichify');
 }, 2000);
    }catch(e){
+    console.log(e.message)
 if(e?.response.data.error){
   alert(e?.response?.data?.error)
 }else{

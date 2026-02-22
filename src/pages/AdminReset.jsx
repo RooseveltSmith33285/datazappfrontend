@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Lock, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { BASE_URL } from '../baseurl';
 
 const AdminReset = () => {
   const [formData, setFormData] = useState({
@@ -35,7 +36,7 @@ const AdminReset = () => {
     }
 
     try {
-      const response = await fetch('https://datazapptoolbackend.vercel.app/admin/reset', {
+      const response = await fetch(`${BASE_URL}/admin/reset`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

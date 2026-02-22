@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, Edit,Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from 'axios';
+import { BASE_URL } from '../baseurl';
 const AdminUsersTable = ({ setUsers,users, setSelectedUser, setEditUser }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -61,7 +62,7 @@ const AdminUsersTable = ({ setUsers,users, setSelectedUser, setEditUser }) => {
 
     try {
    
-      let response = await axios.delete(`https://datazapptoolbackend.vercel.app/deleteUser/${id}`);
+      let response = await axios.delete(`${BASE_URL}/deleteUser/${id}`);
       
      
      

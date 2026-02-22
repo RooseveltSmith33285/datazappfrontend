@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save } from 'lucide-react';
 import axios from 'axios';
+import { BASE_URL } from '../baseurl';
 
 const EditUserModal = ({ user, onClose, onSave }) => {
   const [formData, setFormData] = useState({
@@ -37,7 +38,7 @@ const EditUserModal = ({ user, onClose, onSave }) => {
     onSave({ ...user, ...formData });
     onClose();
 
-    let response=await axios.patch(`https://datazapptoolbackend.vercel.app/updateUser/${user._id}`,formData)
+    let response=await axios.patch(`${BASE_URL}/updateUser/${user._id}`,formData)
   }catch(e){
 
   }

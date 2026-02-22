@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../baseurl';
 
 const Suppression = () => {
   const {state,setState}=useContext(ConsumerContext)
@@ -159,7 +160,7 @@ const Suppression = () => {
   console.log("DATA")
   console.log(data)
 // Update the API endpoint to send to support@enrichifydata.com
-let response=await axios.post('https://datazapptoolbackend.vercel.app/sendData',{
+let response=await axios.post(`${BASE_URL}/sendData`,{
   ...data,
   recipient: 'support@enrichifydata.com'
 })
@@ -226,7 +227,7 @@ alert("Server error please try again")
       console.log("DATA")
       console.log(data)
 // Update the API endpoint to send to support@enrichifydata.com
-let response=await axios.post('https://datazapptoolbackend.vercel.app/sendData',{
+let response=await axios.post(`${BASE_URL}/sendData`,{
   ...data,
   recipient: 'support@enrichifydata.com'
 })
@@ -3172,7 +3173,20 @@ Geography
 
       <div className="row">
          <div style={{width:'75vw'}} className="header-container">
-          <div className="header-icon">
+         <img
+  src="./logoenrichify.jpeg"
+  alt="Enrichify Logo"
+  style={{
+    width: '350px',         
+    height: 'auto',          
+    display: 'block',        
+    margin: '0 auto',       
+    borderRadius: '8px',  
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    objectFit: 'contain'     
+  }}
+/>
+          <div style={{marginTop:'2rem'}} className="header-icon">
             <MapPin size={24} color="white" />
           </div>
           <h1 className="header-title">Organic Lead List Builder</h1>
@@ -5283,7 +5297,21 @@ const Geography = () => {
         {/* Main Card */}
         <div className="main-card">
           <div className="header-container">
-            <div className="header-icon">
+          <img
+  src="./logoenrichify.jpeg"
+  alt="Enrichify Logo"
+  style={{
+    width: '350px',         
+    height: 'auto',          
+    display: 'block',        
+    margin: '0 auto',       
+    borderRadius: '8px',  
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    objectFit: 'contain'     
+  }}
+/>
+
+            <div style={{marginTop:'2rem'}} className="header-icon">
               <MapPin size={24} color="white" />
             </div>
             <h1 className="header-title">Organic Lead List Builder</h1>
@@ -5856,7 +5884,9 @@ if(firstTime=='true'){
               <h2>First-Time User Fee</h2>
             </div>
             <button
-              onClick={() => setIsVisible(false)}
+              onClick={() => {setIsVisible(false)
+                localStorage.removeItem('firstTime')
+              }}
               className="popup-close-btn"
               aria-label="Close popup"
             >
@@ -5893,7 +5923,7 @@ if(firstTime=='true'){
               <p>Bonus Credit Included</p>
               <p>$25 Credit</p>
               <p>
-                Automatically credited to your account upon verification. Use toward any future data request or enrichment service.
+              A $25 account credit will be issued following the successful completion of your first 90-day billing cycle.
               </p>
             </div>
           </div>
@@ -5979,8 +6009,22 @@ if(firstTime=='true'){
             <div style={{ gridColumn: 'span 2 / span 2' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
                 <div style={{ textAlign: 'center' }}>
+       
                 <div style={{width:'75vw'}} className="header-container">
-          <div className="header-icon">
+                <img
+  src="./logoenrichify.jpeg"
+  alt="Enrichify Logo"
+  style={{
+    width: '350px',         
+    height: 'auto',          
+    display: 'block',        
+    margin: '0 auto',       
+    borderRadius: '8px',  
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+    objectFit: 'contain'     
+  }}
+/>
+          <div style={{marginTop:'2rem'}} className="header-icon">
             <Database size={24} color="white" />
           </div>
           <h1 className="header-title">Organic Lead List Builder</h1>
@@ -6030,12 +6074,12 @@ if(firstTime=='true'){
                           id="telemarketing_email_optional"
                           name="campaignType"
                           value="Mailing List + Phone + (Email where available)"
-                          checked={formData.campaignType === 'Mailing List + Phone + (Email where available)'}
+                          checked={formData.campaignType === 'Mailing List + Phone + (Email when available)'}
                           onChange={(e) => handleCampaignTypeChange(e.target.value)}
                           className="radio-input"
                         />
                         <label htmlFor="telemarketing_email_optional" className="radio-label">
-                          Mailing List + Phone + (Email where available)
+                          Mailing List + Phone + (Email when available)
                         </label>
                       </div>
 
@@ -6058,12 +6102,12 @@ if(firstTime=='true'){
                           id="email_telemarketing_optional"
                           name="campaignType"
                           value="Mailing List + Email + (Phone where available)"
-                          checked={formData.campaignType === 'Mailing List + Email + (Phone where available)'}
+                          checked={formData.campaignType === 'Mailing List + Email + (Phone when available)'}
                           onChange={(e) => handleCampaignTypeChange(e.target.value)}
                           className="radio-input"
                         />
                         <label htmlFor="email_telemarketing_optional" className="radio-label">
-                          Mailing List + Email + (Phone where available)
+                          Mailing List + Email + (Phone when available)
                         </label>
                       </div>
                     </div>
@@ -6084,17 +6128,7 @@ if(firstTime=='true'){
                               />
                               <label htmlFor="chkbox_Phone" className="phone-label">Landline</label>
                             </div>
-                            <div className="phone-option">
-                              <input
-                                type="checkbox"
-                                id="chkbox_DNCPhone"
-                                checked={formData.phoneOptions.landlineDNC}
-                                onChange={(e) => handlePhoneOptionChange('landlineDNC', e.target.checked)}
-                                disabled={!formData.phoneOptions.landline}
-                                className="phone-checkbox"
-                              />
-                              <label htmlFor="chkbox_DNCPhone" className="phone-label">DNC Scrub</label>
-                            </div>
+                            
                           </div>
 
                           <div className="phone-options-grid">
@@ -6108,17 +6142,7 @@ if(firstTime=='true'){
                               />
                               <label htmlFor="chkbox_Cell" className="phone-label">Cell</label>
                             </div>
-                            <div className="phone-option">
-                              <input
-                                type="checkbox"
-                                id="chkbox_DNCCell"
-                                checked={formData.phoneOptions.cellDNC}
-                                onChange={(e) => handlePhoneOptionChange('cellDNC', e.target.checked)}
-                                disabled={!formData.phoneOptions.cell}
-                                className="phone-checkbox"
-                              />
-                              <label htmlFor="chkbox_DNCCell" className="phone-label">DNC Scrub</label>
-                            </div>
+                           
                           </div>
 
                           <div className="phone-options-grid">
@@ -6132,17 +6156,7 @@ if(firstTime=='true'){
                               />
                               <label htmlFor="chkbox_Mixed" className="phone-label">Landline OR Cell</label>
                             </div>
-                            <div className="phone-option">
-                              <input
-                                type="checkbox"
-                                id="chkbox_DNCMixed"
-                                checked={formData.phoneOptions.mixedDNC}
-                                onChange={(e) => handlePhoneOptionChange('mixedDNC', e.target.checked)}
-                                disabled={!formData.phoneOptions.mixed}
-                                className="phone-checkbox"
-                              />
-                              <label htmlFor="chkbox_DNCMixed" className="phone-label">DNC Scrub</label>
-                            </div>
+                           
                           </div>
                         </div>
                       </div>

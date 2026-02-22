@@ -3,6 +3,7 @@ import { Eye, EyeOff, Database, Shield, Zap, Globe, RefreshCw } from 'lucide-rea
 import styles from './LoginPage.module.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../baseurl';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
@@ -64,7 +65,7 @@ const ResetPassword = () => {
     setErrors({});
     
     try {
-      let response = await axios.post(`https://datazapptoolbackend.vercel.app/resetpassword`, formData);
+      let response = await axios.post(`${BASE_URL}/resetpassword`, formData);
       setSubmitStatus('success');
       alert("Password reset successfully");
       // Optionally navigate to login page after successful reset

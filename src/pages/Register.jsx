@@ -3,6 +3,7 @@ import { Eye, EyeOff, Database, Shield, Zap, Globe, X, Lock } from 'lucide-react
 import styles from './RegistrationPage.module.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../baseurl';
 
 const RegistrationPage = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +13,7 @@ const RegistrationPage = () => {
     confirmPassword: '',
     address: '',
     phone: '',
-    sale_rep: '', // New field for sales representative
+   
     agreeToTerms: false
   });
 
@@ -30,6 +31,7 @@ const RegistrationPage = () => {
     'Andrew Johnson',
     'Roosevelt Smith',
     'Kyle Black',
+    'Todd Burch',
     'Kyle Peachey'
   ];
 
@@ -94,7 +96,7 @@ const RegistrationPage = () => {
     } else if (!/^\+?[\d\s\-\(\)]+$/.test(formData.phone)) {
       newErrors.phone = 'Please enter a valid phone number';
     }
-    if (!formData.sale_rep) newErrors.sale_rep = 'Please select a sales representative'; // New validation
+   
     if (!formData.agreeToTerms) newErrors.agreeToTerms = 'You must agree to the terms';
     
     return newErrors;
@@ -111,7 +113,7 @@ const RegistrationPage = () => {
     setIsSubmitting(true);
     
     try {
-      let response = await axios.post(`https://datazapptoolbackend.vercel.app/register`, formData);
+      let response = await axios.post(`${BASE_URL}/register`, formData);
       setTimeout(() => {
         setIsSubmitting(false);
         alert('Registration successful! Welcome to Enrichify.');
@@ -268,24 +270,7 @@ const RegistrationPage = () => {
                 {errors.address && <p className={styles.error}>{errors.address}</p>}
               </div>
 
-              {/* Sales Representative Dropdown */}
-              <div className={styles.formGroup}>
-                <label>Sales Representative</label>
-                <select
-                  name="sale_rep"
-                  value={formData.sale_rep}
-                  onChange={handleChange}
-                  className={styles.selectInput}
-                >
-                  <option value="">Select a sales representative</option>
-                  {salesRepresentatives.map((rep) => (
-                    <option key={rep} value={rep}>
-                      {rep}
-                    </option>
-                  ))}
-                </select>
-                {errors.sale_rep && <p className={styles.error}>{errors.sale_rep}</p>}
-              </div>
+           
 
               {/* Password */}
               <div className={styles.formGroup}>

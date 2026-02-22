@@ -1,8 +1,6 @@
 import React, { useMemo, useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-
-// Mock context for demo - replace with your actual ConsumerContext
-const ConsumerContext = React.createContext();
+import { ConsumerContext } from "../context/ConsumerContextAPI";
 
 export const PRICING_CONFIG = {
   industries: {
@@ -94,92 +92,93 @@ export const PRICING_CONFIG = {
     ]
   },
 
+  // Updated with actual Cost Per Lead values from your data
   baseByCategoryIndustry: {
     "Core B2B & Professional Services": {
-      "Accounting & Finance": 22.0,
-      "Advertising & Marketing": 21.0,
-      "Business Consulting": 23.0,
-      "Legal Services": 28.0,
-      "Real Estate & Property Management": 19.0,
-      "Human Resources / Staffing / Recruiting": 18.5,
-      "Insurance (Health, Auto, Life, Commercial)": 21.0,
-      "Banking & Financial Services": 24.0
+      "Accounting & Finance": 51.87,
+      "Advertising & Marketing": 54.76,
+      "Business Consulting": 53.66,
+      "Legal Services": 52.99,
+      "Real Estate & Property Management": 50.78,
+      "Human Resources / Staffing / Recruiting": 50.78,
+      "Insurance (Health, Auto, Life, Commercial)": 50.29,
+      "Banking & Financial Services": 54.33
     },
     "Healthcare & Life Sciences": {
-      "Hospitals & Health Systems": 26.0,
-      "Private Medical Practices": 22.0,
-      "Dental Services": 20.0,
-      "Mental Health & Counseling": 19.5,
-      "Pharmaceuticals & Biotech": 27.0,
-      "Home Health & Senior Care": 18.0,
-      "Medical Device & Equipment Suppliers": 25.0,
-      "Physical Therapy & Rehabilitation": 19.0
+      "Hospitals & Health Systems": 29.51,
+      "Private Medical Practices": 30.04,
+      "Dental Services": 26.61,
+      "Mental Health & Counseling": 31.35,
+      "Pharmaceuticals & Biotech": 30.66,
+      "Home Health & Senior Care": 27.56,
+      "Medical Device & Equipment Suppliers": 27.41,
+      "Physical Therapy & Rehabilitation": 27.41
     },
     "Technology & Digital": {
-      "Software & SaaS": 23.0,
-      "IT Services / Managed Service Providers": 21.0,
-      "Data & Analytics Firms": 24.0,
-      "Web Development / Design": 18.5,
-      "Cybersecurity": 26.0,
-      "Artificial Intelligence / Machine Learning": 28.0,
-      "Telecommunications & Cloud Services": 22.0
+      "Software & SaaS": 44.02,
+      "IT Services / Managed Service Providers": 45.13,
+      "Data & Analytics Firms": 44.66,
+      "Web Development / Design": 43.96,
+      "Cybersecurity": 45.56,
+      "Artificial Intelligence / Machine Learning": 43.19,
+      "Telecommunications & Cloud Services": 43.96
     },
     "Retail, E-Commerce & Consumer Goods": {
-      "Apparel & Fashion": 16.0,
-      "Automotive Retail & Dealerships": 17.5,
-      "Home Goods & Furnishings": 15.5,
-      "Food & Beverage / Grocery": 14.0,
-      "E-Commerce & Online Retail": 16.5,
-      "Consumer Electronics": 17.0,
-      "Beauty, Wellness & Personal Care": 15.0
+      "Apparel & Fashion": 44.33,
+      "Automotive Retail & Dealerships": 44.78,
+      "Home Goods & Furnishings": 46.42,
+      "Food & Beverage / Grocery": 43.5,
+      "E-Commerce & Online Retail": 45.07,
+      "Consumer Electronics": 45.46,
+      "Beauty, Wellness & Personal Care": 42.73
     },
     "Education & Nonprofit": {
-      "K-12 Education": 17.5,
-      "Higher Education (Colleges & Universities)": 18.5,
-      "Online Learning Platforms": 19.0,
-      "Nonprofit Organizations": 16.0,
-      "Faith-Based Organizations": 14.5,
-      "Foundations & Charitable Trusts": 17.0
+      "K-12 Education": 44.54,
+      "Higher Education (Colleges & Universities)": 42.36,
+      "Online Learning Platforms": 41.83,
+      "Nonprofit Organizations": 46.24,
+      "Faith-Based Organizations": 46.33,
+      "Foundations & Charitable Trusts": 45.54
     },
     "Industrial & Manufacturing": {
-      "Automotive Manufacturing": 24.0,
-      "Aerospace & Defense": 28.0,
-      "Construction & Building Materials": 19.5,
-      "Energy, Oil & Gas": 26.0,
-      "Engineering Services": 23.0,
-      "Logistics & Supply Chain": 20.0,
-      "Machinery & Heavy Equipment": 22.0,
-      "Plastics, Metals & Industrial Fabrication": 21.0
+      "Automotive Manufacturing": 44.02,
+      "Aerospace & Defense": 42.99,
+      "Construction & Building Materials": 45.92,
+      "Energy, Oil & Gas": 44.7,
+      "Engineering Services": 43.11,
+      "Logistics & Supply Chain": 44.97,
+      "Machinery & Heavy Equipment": 42.67,
+      "Plastics, Metals & Industrial Fabrication": 47.04
     },
     "Hospitality, Travel & Entertainment": {
-      "Restaurants & Food Service": 14.0,
-      "Hotels & Lodging": 16.5,
-      "Event Management": 17.0,
-      "Sports & Recreation": 15.5,
-      "Travel & Tourism": 16.0,
-      "Arts, Media & Entertainment": 15.0
+      "Restaurants & Food Service": 43.79,
+      "Hotels & Lodging": 45.81,
+      "Event Management": 44.06,
+      "Sports & Recreation": 45.1,
+      "Travel & Tourism": 45.24,
+      "Arts, Media & Entertainment": 43.42
     },
     "Government, Public Sector & Utilities": {
-      "Federal / State / Local Government": 25.0,
-      "Public Safety & Law Enforcement": 24.0,
-      "Transportation Authorities": 22.0,
-      "Utilities & Infrastructure": 23.0,
-      "Postal / Delivery Services": 20.0
+      "Federal / State / Local Government": 47.35,
+      "Public Safety & Law Enforcement": 46.37,
+      "Transportation Authorities": 47.19,
+      "Utilities & Infrastructure": 46.97,
+      "Postal / Delivery Services": 45.49
     },
     "Real Estate & Housing": {
-      "Residential Real Estate": 19.0,
-      "Commercial Real Estate": 22.0,
-      "Property Development": 24.0,
-      "Mortgage & Lending": 21.0,
-      "Title & Escrow Services": 18.5
+      "Residential Real Estate": 47.11,
+      "Commercial Real Estate": 42.94,
+      "Property Development": 43.48,
+      "Mortgage & Lending": 42.73,
+      "Title & Escrow Services": 44.13
     },
     "Specialty / Emerging Segments": {
-      "Cannabis & CBD": 23.0,
-      "Renewable Energy / Sustainability": 22.5,
-      "Startups & Venture Capital": 25.0,
-      "Cryptocurrency / FinTech": 26.0,
-      "Logistics Tech / Delivery Platforms": 21.0,
-      "EV & Green Mobility": 24.0
+      "Cannabis & CBD": 44.44,
+      "Renewable Energy / Sustainability": 43.86,
+      "Startups & Venture Capital": 46.64,
+      "Cryptocurrency / FinTech": 44.29,
+      "Logistics Tech / Delivery Platforms": 43.91,
+      "EV & Green Mobility": 45.21
     }
   },
 
@@ -232,7 +231,7 @@ function geoMultiplier(geo) {
 }
 
 function priceFor(category, industry, geo, membershipTier) {
-  const base = PRICING_CONFIG.baseByCategoryIndustry[category]?.[industry] ?? 18.0;
+  const base = PRICING_CONFIG.baseByCategoryIndustry[category]?.[industry] ?? 45.0;
   const mult = geoMultiplier(geo);
 
   let retail = +(base * mult).toFixed(2);
@@ -257,6 +256,10 @@ export default function LeadPricingCalculator({
   const contextData = useContext(ConsumerContext) || { state: {}, setState: () => {} };
   const { state: contextState, setState: setContextState } = contextData;
 
+  console.log('🔵 LeadPricingCalculator - Context Data:', contextData);
+  console.log('🔵 LeadPricingCalculator - contextState:', contextState);
+  console.log('🔵 LeadPricingCalculator - setContextState type:', typeof setContextState);
+
   const [category, setCategory] = useState(defaultCategory);
   const [industry, setIndustry] = useState(defaultIndustry);
   const [state, setState] = useState(defaultState);
@@ -264,8 +267,49 @@ export default function LeadPricingCalculator({
   const [qty, setQty] = useState(defaultMonthlyQty);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Leads purchase options
+  const [totalPurchaseLeads, setTotalPurchaseLeads] = useState(50);
+  const leadsOptions = [25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95, 100];
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+
+  // Initialize context with default values on mount
+  useEffect(() => {
+    console.log('🟢 MOUNT - Initializing context with defaults...');
+    console.log('🟢 MOUNT - setContextState exists?', !!setContextState);
+    console.log('🟢 MOUNT - Default values:', {
+      state: defaultState,
+      industry_category: defaultCategory,
+      specific_industry: defaultIndustry,
+      monthly_lead_volume: defaultMonthlyQty,
+      membership_tier: defaultMembership,
+      total_purchase_leads: 50,
+    });
+    
+    if (setContextState) {
+      setContextState(prev => {
+        console.log('🟢 MOUNT - Previous context state:', prev);
+        const newState = {
+          ...prev,
+          state: defaultState,
+          industry_category: defaultCategory,
+          specific_industry: defaultIndustry,
+          monthly_lead_volume: defaultMonthlyQty,
+          membership_tier: defaultMembership,
+          total_purchase_leads: 50,
+          plan: '',
+          plan_price: 0,
+        };
+        console.log('🟢 MOUNT - New context state:', newState);
+        return newState;
+      });
+    } else {
+      console.log('🔴 MOUNT - setContextState is NOT available!');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run only on mount
+
   function handleBack() {
     window.history.back();
   }
@@ -286,29 +330,71 @@ export default function LeadPricingCalculator({
     }
   }, [category, industry, industriesForCategory]);
 
-  useEffect(() => {
-    if (setContextState) {
-      setContextState(prev => ({
-        ...prev,
-        state,
-        industry_category: category,
-        specific_industry: industry,
-        monthly_lead_volume: qty,
-        membership_tier: membership,
-        plan: selectedPlan?.type || '',
-        plan_price: selectedPlan ? (selectedPlan.type === 'retail' ? retail : member) : 0,
-      }));
-    }
-  }, [state, category, industry, qty, membership, selectedPlan, setContextState]);
-
   const pricing = useMemo(() => priceFor(category, industry, state, membership), [category, industry, state, membership]);
   const { retail, member, discount, monthlyFee } = pricing;
+
+  // Update context whenever any value changes
+  useEffect(() => {
+    console.log('🟡 UPDATE - Context update triggered');
+    console.log('🟡 UPDATE - Current form values:', {
+      state,
+      category,
+      industry,
+      qty,
+      membership,
+      selectedPlan,
+      totalPurchaseLeads,
+      retail,
+      member
+    });
+    
+    if (setContextState) {
+      setContextState(prev => {
+        console.log('🟡 UPDATE - Previous context state:', prev);
+        const newState = {
+          ...prev,
+          state,
+          industry_category: category,
+          specific_industry: industry,
+          monthly_lead_volume: qty,
+          membership_tier: membership,
+          plan: selectedPlan?.type || '',
+          plan_price: selectedPlan ? (selectedPlan.type === 'retail' ? retail : member) : 0,
+          total_purchase_leads: totalPurchaseLeads,
+        };
+        console.log('🟡 UPDATE - New context state:', newState);
+        return newState;
+      });
+    } else {
+      console.log('🔴 UPDATE - setContextState is NOT available!');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state, category, industry, qty, membership, selectedPlan, totalPurchaseLeads, retail, member]);
+
+  // Debug: Log context state
+  useEffect(() => {
+    console.log('🔍 DEBUG - Current Context State from LeadPricingCalculator:', {
+      state,
+      industry_category: category,
+      specific_industry: industry,
+      monthly_lead_volume: qty,
+      membership_tier: membership,
+      plan: selectedPlan?.type || '',
+      plan_price: selectedPlan ? (selectedPlan.type === 'retail' ? retail : member) : 0,
+      total_purchase_leads: totalPurchaseLeads,
+    });
+    console.log('🔍 DEBUG - Full contextState from Context:', contextState);
+  }, [state, category, industry, qty, membership, selectedPlan, totalPurchaseLeads, retail, member, contextState]);
 
   const safeQty = Math.max(10, Math.min(150, Math.floor(Number.isFinite(qty) ? qty : 10)));
   const retailTotal = +(retail * safeQty).toFixed(2);
   const memberTotal = +(member * safeQty).toFixed(2);
   const savings = +(retailTotal - memberTotal).toFixed(2);
   const totalWithFee = +(memberTotal + monthlyFee).toFixed(2);
+
+  const handleLeadsChange = (leadCount) => {
+    setTotalPurchaseLeads(leadCount);
+  };
 
   const styles = {
     wrap: {
@@ -495,6 +581,40 @@ export default function LeadPricingCalculator({
       cursor: "pointer",
       transition: "all 0.2s ease",
     },
+    leadsPurchaseSection: {
+      background: "#0a0e15",
+      border: "1px solid #1e2733",
+      borderRadius: 10,
+      padding: 20,
+      marginBottom: 24,
+    },
+    leadsGrid: {
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))",
+      gap: "12px",
+      maxWidth: "600px",
+      margin: "16px auto 0 auto",
+    },
+    leadOption: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "12px 8px",
+      backgroundColor: "#121823",
+      border: `2px solid #2a3545`,
+      borderRadius: "6px",
+      cursor: "pointer",
+      transition: "all 0.2s ease",
+      fontWeight: "500",
+      color: "#e6eef6",
+      fontSize: "14px",
+    },
+    leadOptionSelected: {
+      backgroundColor: "#00d9ff",
+      border: `2px solid #00d9ff`,
+      color: "#000",
+      fontWeight: "600",
+    },
   };
 
   function handleQtyChange(v) {
@@ -506,6 +626,10 @@ export default function LeadPricingCalculator({
 
   function handleSubmit(e) {
     if (!selectedPlan) return;
+    
+    console.log('🚀 SUBMIT - Starting submission...');
+    console.log('🚀 SUBMIT - Selected Plan:', selectedPlan);
+    console.log('🚀 SUBMIT - Context State at submit:', contextState);
     
     setIsSubmitting(true);
 
@@ -527,24 +651,32 @@ export default function LeadPricingCalculator({
       plan: selectedPlan.type,
       plan_price: selectedPlan.type === 'retail' ? retail : member,
       plan_total: selectedPlan.type === 'retail' ? retailTotal : totalWithFee,
+      total_purchase_leads: totalPurchaseLeads,
       timestamp: new Date().toISOString(),
     };
 
+    console.log('🚀 SUBMIT - Payload being sent:', payload);
+    console.log('🚀 SUBMIT - Full context state:', contextState);
+
     if (onSubmit) {
+      console.log('🚀 SUBMIT - Calling onSubmit callback');
       onSubmit(payload);
     } else {
-      // If no onSubmit handler, just update context and simulate completion
-    navigate('/supression')
+      console.log('🚀 SUBMIT - Navigating to /supression');
+      navigate('/supression');
     }
   }
 
   function handleReset() {
+    console.log('🔄 RESET - Resetting form to defaults');
     setCategory(defaultCategory);
     setIndustry(defaultIndustry);
     setState(defaultState);
     setMembership(defaultMembership);
     setQty(defaultMonthlyQty);
     setSelectedPlan(null);
+    setTotalPurchaseLeads(50);
+    console.log('🔄 RESET - Form reset complete');
   }
 
   const currentTier = PRICING_CONFIG.membershipTiers[membership];
@@ -566,6 +698,56 @@ export default function LeadPricingCalculator({
           Calculate your custom lead pricing based on industry, location, and membership tier. 
           Save up to 35% with our Platinum membership.
         </p>
+
+        {/* Leads Purchase Selection */}
+        <div style={styles.leadsPurchaseSection}>
+          <h3 style={{
+            fontSize: "16px",
+            fontWeight: "600",
+            color: "#e6eef6",
+            marginBottom: "16px",
+            textAlign: "center"
+          }}>
+            How many leads would you like to purchase?
+          </h3>
+          <div style={styles.leadsGrid}>
+            {leadsOptions.map((leadCount) => (
+              <div
+                key={leadCount}
+                style={{
+                  ...styles.leadOption,
+                  ...(totalPurchaseLeads === leadCount ? styles.leadOptionSelected : {})
+                }}
+                onClick={() => handleLeadsChange(leadCount)}
+                onMouseOver={(e) => {
+                  if (totalPurchaseLeads !== leadCount) {
+                    e.currentTarget.style.borderColor = "#00d9ff";
+                    e.currentTarget.style.background = "#1a1f2b";
+                  }
+                }}
+                onMouseOut={(e) => {
+                  if (totalPurchaseLeads !== leadCount) {
+                    e.currentTarget.style.borderColor = "#2a3545";
+                    e.currentTarget.style.background = "#121823";
+                  }
+                }}
+              >
+                {leadCount}
+              </div>
+            ))}
+          </div>
+          {totalPurchaseLeads && (
+            <p style={{
+              textAlign: "center",
+              marginTop: "16px",
+              color: "#00d9ff",
+              fontWeight: "500",
+              fontSize: "14px"
+            }}>
+              Selected: {totalPurchaseLeads} leads
+            </p>
+          )}
+        </div>
 
         <div style={styles.grid}>
           <div>
@@ -610,21 +792,7 @@ export default function LeadPricingCalculator({
             </select>
           </div>
 
-          <div>
-            <label style={styles.label} htmlFor="qty">Monthly Lead Volume (10-150 leads)</label>
-            <input
-              id="qty"
-              type="number"
-              min={10}
-              max={150}
-              step={1}
-              inputMode="numeric"
-              value={qty}
-              onChange={(e) => handleQtyChange(e.target.value)}
-              style={styles.input}
-            />
-          </div>
-
+        
           <div style={{ gridColumn: compact ? "1" : "1 / -1" }}>
             <label style={styles.label} htmlFor="membership">Membership Tier</label>
             <select

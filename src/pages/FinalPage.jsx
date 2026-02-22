@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../baseurl';
 const Suppression = () => {
   const {state,setState}=useContext(ConsumerContext)
   const [activeTab, setActiveTab] = useState('supression');
@@ -158,7 +159,7 @@ const Suppression = () => {
   console.log("DATA")
   console.log(data)
 // Update the API endpoint to send to support@enrichifydata.com
-let response=await axios.post('https://datazapptoolbackend.vercel.app/sendData',{
+let response=await axios.post(`${BASE_URL}/sendData`,{
   ...data,
   recipient: 'support@enrichifydata.com'
 })
@@ -198,7 +199,7 @@ campaign_type: '',
       save_name: '',
       supression_option:''
 })
-window.location.reload(true)
+window.location.href='/consumer'
  }catch(e){
 alert("Server error please try again")
  }
@@ -225,7 +226,7 @@ alert("Server error please try again")
       console.log("DATA")
       console.log(data)
 // Update the API endpoint to send to support@enrichifydata.com
-let response=await axios.post('https://datazapptoolbackend.vercel.app/sendData',{
+let response=await axios.post(`${BASE_URL}/sendData`,{
   ...data,
   recipient: 'support@enrichifydata.com'
 })
@@ -267,7 +268,7 @@ setState({
 })
 alert("Enrichiment process has started")
 
-window.location.reload(true)
+window.location.href='/consumer'
     }catch(e){
 alert("Server problem, please try again")
     }

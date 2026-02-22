@@ -3,6 +3,7 @@ import { Eye, EyeOff, ArrowLeft, Database, Shield, Zap, Globe, CheckCircle, Lock
 import styles from './LoginPage.module.css';
 import axios from 'axios';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { BASE_URL } from '../baseurl';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
@@ -73,7 +74,7 @@ const ResetPassword = () => {
     setIsSubmitting(true);
     
     try {
-      const response = await axios.post(`https://datazapptoolbackend.vercel.app/resetpassword`, {
+      const response = await axios.post(`${BASE_URL}/resetpassword`, {
         id: token,
         password: formData.password,
       });

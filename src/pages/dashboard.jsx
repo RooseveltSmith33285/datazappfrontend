@@ -11,6 +11,7 @@ import UsersTable from '../component/AdminUsersTable';
 
 import axios from 'axios';
 import EditUserModal from '../component/AdminEditUser';
+import { BASE_URL } from '../baseurl';
 
 export default function AdminDashboard() {
     const [activeTab, setActiveTab] = useState('users');
@@ -222,7 +223,7 @@ getRequests();
 
 const getRequests=async()=>{
     try{
-let response=await axios.get(`https://datazapptoolbackend.vercel.app/getRequests`)
+let response=await axios.get(`${BASE_URL}/getRequests`)
 console.log(response.data)
 setRequests(response.data.requests)
     }catch(e){
@@ -232,7 +233,7 @@ setRequests(response.data.requests)
 
 const getUsers=async()=>{
     try{
-let response=await axios.get(`https://datazapptoolbackend.vercel.app/getUsers`)
+let response=await axios.get(`${BASE_URL}/getUsers`)
 
 setUsers(response.data.users)
     }catch(e){
